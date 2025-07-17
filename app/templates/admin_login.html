@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section aria-labelledby="admin-login-heading" role="region" class="mt-4">
+  <h2 id="admin-login-heading" class="mb-4">Admin Login</h2>
+  <form method="POST" aria-describedby="login-description">
+    <p id="login-description" class="visually-hidden">Enter your admin credentials to access booking management.</p>
+    
+    <div class="mb-3">
+      <label for="username" class="form-label">Username</label>
+      <input id="username" name="username" type="text" class="form-control" required 
+             autocomplete="username" aria-required="true" aria-label="Admin username">
+    </div>
+    
+    <div class="mb-3">
+      <label for="password" class="form-label">Password</label>
+      <input id="password" name="password" type="password" class="form-control" required 
+             autocomplete="current-password" aria-required="true" aria-label="Admin password">
+    </div>
+    
+    <button type="submit" class="btn btn-primary" aria-label="Submit login form">Login</button>
+  </form>
+</section>
+{% endblock %}
+

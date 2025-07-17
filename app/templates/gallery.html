@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="mb-4 text-center">Glamping Gallery</h2>
+
+<!-- Swiper -->
+<div class="swiper mySwiper">
+  <div class="swiper-wrapper">
+    <div class="swiper-slide">
+      <img src="{{ url_for('static', filename='images/gallery1.jpg') }}" class="img-fluid rounded shadow" alt="Girls jumping across stones under a bridge arch">
+    </div>
+    <div class="swiper-slide">
+      <img src="{{ url_for('static', filename='images/gallery2.jpg') }}" class="img-fluid rounded shadow" alt="A goat behind a flower bed">
+    </div>
+    <div class="swiper-slide">
+      <img src="{{ url_for('static', filename='images/gallery3.jpg') }}" class="img-fluid rounded shadow" alt="A goat on an old stone wall">
+    </div>
+    <div class="swiper-slide">
+      <img src="{{ url_for('static', filename='images/gallery4.jpg') }}" class="img-fluid rounded shadow" alt="Outdoor dining setup">
+    </div>
+    <div class="swiper-slide">
+      <img src="{{ url_for('static', filename='images/gallery5.jpg') }}" class="img-fluid rounded shadow" alt="Girls jumping across stones under a bridge arch">
+    </div>
+    <div class="swiper-slide">
+      <img src="{{ url_for('static', filename='images/gallery6.jpg') }}" class="img-fluid rounded shadow" alt="Landscape">
+    </div>
+    <div class="swiper-slide">
+      <img src="{{ url_for('static', filename='images/gallery8.jpg') }}" class="img-fluid rounded shadow" alt="Glamping pod">
+    </div>
+    <div class="swiper-slide">
+      <img src="{{ url_for('static', filename='images/gallery7.jpg') }}" class="img-fluid rounded shadow" alt="Glamping pods">
+    </div>
+    <div class="swiper-slide">
+      <img src="{{ url_for('static', filename='images/gallery9.jpg') }}" class="img-fluid rounded shadow" alt="Shanid Castle">
+    </div>
+  </div>
+
+  <!-- Swiper navigation -->
+  <div class="swiper-button-next"></div>
+  <div class="swiper-button-prev"></div>
+  <!-- Pagination -->
+  <div class="swiper-pagination"></div>
+</div>
+
+<!-- YouTube Video -->
+<div class="container mt-5 d-flex flex-column align-items-center">
+  <h3 class="mb-3 text-center">Discover the Shannon Estuary Way</h3>
+  <div class="video-container">
+    <iframe 
+      src="https://www.youtube.com/embed/jPzHaW4Q32U" 
+      frameborder="0"
+      allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" 
+      allowfullscreen>
+    </iframe>
+  </div>
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/gallery.js') }}"></script>
+{% endblock %}
