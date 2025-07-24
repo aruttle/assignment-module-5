@@ -5,7 +5,8 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn config.wsgi:application
     envVars:
-      - key: DATABASE_URL
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings
         fromDatabase:
           name: glampingdb
           property: connectionString

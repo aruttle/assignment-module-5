@@ -17,6 +17,7 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost').split(','
 
 # --- Installed Apps ---
 INSTALLED_APPS = [
+    # Django core apps...
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -24,13 +25,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # Local apps
-    'bookings',     # Booking system
-    'projects',     # Project/task tracking
-    'messaging',    # Inbox/messages
-    'users',        # User management
+    # Your apps
+    'core',
+    'users',
+    'bookings',    
+    'messaging',
+    'projects',
 ]
-
 # --- Middleware ---
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -44,7 +45,7 @@ MIDDLEWARE = [
 ]
 
 # --- Root URL Configuration ---
-ROOT_URLCONF = 'glamping_portal.urls'
+ROOT_URLCONF = 'config.urls'
 
 # --- Templates ---
 TEMPLATES = [
@@ -64,7 +65,10 @@ TEMPLATES = [
 ]
 
 # --- WSGI ---
-WSGI_APPLICATION = 'glamping_portal.wsgi.application'
+WSGI_APPLICATION = 'config.wsgi.application'
+# --- ASGI ---
+ASGI_APPLICATION = 'config.asgi.application'
+
 
 # --- Database ---
 DATABASES = {

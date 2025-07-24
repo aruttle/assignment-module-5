@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Booking Details</h2>
+<p><strong>Accommodation:</strong> {{ booking.accommodation.name }}</p>
+<p><strong>Check-in:</strong> {{ booking.check_in }}</p>
+<p><strong>Check-out:</strong> {{ booking.check_out }}</p>
+<p><strong>Created at:</strong> {{ booking.created_at }}</p>
+<a href="{% url 'bookings:booking_list' %}">Back to bookings</a>
+{% endblock %}
