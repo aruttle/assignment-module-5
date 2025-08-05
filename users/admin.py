@@ -2,6 +2,8 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser
 from .forms import CustomUserCreationForm, CustomUserChangeForm
+# from bookings.models import Accommodation
+
 
 class CustomUserAdmin(UserAdmin):
     model = CustomUser
@@ -25,3 +27,9 @@ class CustomUserAdmin(UserAdmin):
     )
 
 admin.site.register(CustomUser, CustomUserAdmin)
+
+# @admin.register(Accommodation)
+# class AccommodationAdmin(admin.ModelAdmin):
+#     list_display = ('name', 'accommodation_type')
+#     fields = ('name', 'accommodation_type', 'description', 'image_landscape', 'image_portrait')
+

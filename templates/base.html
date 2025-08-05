@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}Glamping Portal{% endblock %}</title>
+</head>
+<body>
+    <header>
+        <h1>Welcome to Glamping Portal</h1>
+        <nav>
+            <a href="/">Home</a> | 
+            <a href="/bookings/">Bookings</a>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        <!-- Page specific content  -->
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>© 2025 Glamping Portal</p>
+    </footer>
+</body>
+</html>

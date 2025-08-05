@@ -1,5 +1,8 @@
 from django.contrib import admin
-from .models import Booking, Accommodation
+from .models import Accommodation
 
-admin.site.register(Accommodation)
-admin.site.register(Booking)
+@admin.register(Accommodation)
+class AccommodationAdmin(admin.ModelAdmin):
+    
+    fields = ('name', 'description', 'image_landscape', 'image_portrait', 'price_per_night')
+    list_display = ('name', 'price_per_night')

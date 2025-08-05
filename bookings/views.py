@@ -1,27 +1,24 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import Booking
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Booking, Accommodation
 from .forms import BookingForm
-from django.contrib.auth.decorators import login_required
 
-@login_required
-def booking_list(request):
-    bookings = Booking.objects.filter(user=request.user)
-    return render(request, 'bookings/booking_list.html', {'bookings': bookings})
-
-@login_required
-def booking_create(request):
+def accommodation_detail(request, pk):
+    accommodation = get_object_or_404(Accommodation, pk=pk)
+    
     if request.method == 'POST':
         form = BookingForm(request.POST)
         if form.is_valid():
             booking = form.save(commit=False)
             booking.user = request.user
             booking.save()
-            return redirect('bookings:booking_list')
+            return redirect('booking_success')
     else:
-        form = BookingForm()
-    return render(request, 'bookings/booking_form.html', {'form': form})
+        form = BookingForm(initial={'accommodation': accommodation})
 
-@login_required
-def booking_detail(request, pk):
-    booking = get_object_or_404(Booking, pk=pk, user=request.user)
-    return render(request, 'bookings/booking_detail.html', {'booking': booking})
+    return render(request, 'bookings/accommodation_detail.html', {
+        'accommodation': accommodation,
+        'form': form
+    })
+
+def booking_success(request):
+    return render(request, 'bookings/booking_success.html')
