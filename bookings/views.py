@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
 from .models import Accommodation, Booking
 from .forms import BookingForm
 import json
@@ -9,22 +10,33 @@ def accommodation_detail(request, pk):
     if request.method == 'POST':
         form = BookingForm(request.POST)
         if form.is_valid():
-            booking = form.save(commit=False)
-            booking.user = request.user  # Make sure the user is assigned
-            booking.accommodation = accommodation  # Assign accommodation to booking
-            booking.save()
-            return redirect('booking_success')  # Ensure this URL name matches your urls.py
+            new_check_in = form.cleaned_data['check_in']
+            new_check_out = form.cleaned_data['check_out']
+
+            # Check for overlapping bookings
+            overlapping = Booking.objects.filter(
+                accommodation=accommodation,
+                check_in__lt=new_check_out,
+                check_out__gt=new_check_in
+            ).exists()
+
+            if overlapping:
+                messages.error(request, "Selected dates are already booked. Please choose different dates.")
+            else:
+                booking = form.save(commit=False)
+                booking.user = request.user
+                booking.accommodation = accommodation
+                booking.save()
+                return redirect('bookings:booking_success')
     else:
         form = BookingForm(initial={'accommodation': accommodation})
 
-    # Get all bookings for this accommodation
     bookings = Booking.objects.filter(accommodation=accommodation)
 
-    # Format booked date ranges for JS (flatpickr disables)
     booked_ranges = [
         {
-            'start': booking.check_in.strftime('%Y-%m-%d'),
-            'end': booking.check_out.strftime('%Y-%m-%d')
+            'from': booking.check_in.strftime('%Y-%m-%d'),
+            'to': booking.check_out.strftime('%Y-%m-%d')
         }
         for booking in bookings
     ]
@@ -37,6 +49,8 @@ def accommodation_detail(request, pk):
 
     return render(request, 'bookings/accommodation_detail.html', context)
 
-
 def booking_success(request):
     return render(request, 'bookings/booking_success.html')
+
+def booking_list(request):
+    return render(request, 'bookings/booking_list.html')

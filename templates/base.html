@@ -3,75 +3,36 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>{% block title %}Glamping Portal{% endblock %}</title>
-    
+
     <!-- Flatpickr CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    
-    <!-- Static files -->
+
+    <!-- Your Static CSS -->
     <link rel="stylesheet" href="{% static 'css/accommodation.css' %}">
-
 </head>
-
 <body>
     <header>
         <h1>Welcome to Glamping Portal</h1>
         <nav>
-            <a href="/">Home</a> | 
-            <a href="/bookings/">Bookings</a>
+            <a href="{% url 'core:home' %}">Home</a> |
+            <a href="{% url 'bookings:booking_list' %}">Bookings</a>
         </nav>
     </header>
 
     <main>
-        {% block content %}
-        <!-- Page specific content -->
-        {% endblock %}
+        {% block content %}{% endblock %}
     </main>
 
     <footer>
         <p>© 2025 Glamping Portal</p>
     </footer>
 
-    <!-- Flatpickr JS -->
+    <!-- JS scripts -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="{% static 'js/flatpickr-init.js' %}" defer></script>
 
-    <!-- Booking calendar logic -->
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const checkIn = document.getElementById("check_in");
-        const checkOut = document.getElementById("check_out");
-        const bookedDataEl = document.getElementById("booked-ranges-data");
-
-        if (checkIn && checkOut) {
-          let disableRanges = [];
-
-          // If booked ranges are passed from the view, parse and format them
-          if (bookedDataEl) {
-            const ranges = JSON.parse(bookedDataEl.textContent);
-            disableRanges = ranges.map(range => ({
-              from: range.start,
-              to: range.end
-            }));
-          }
-
-          flatpickr(checkIn, {
-            dateFormat: "Y-m-d",
-            minDate: "today",
-            disable: disableRanges,
-            onChange: function (selectedDates) {
-              if (selectedDates.length > 0) {
-                checkOut._flatpickr.set("minDate", selectedDates[0]);
-              }
-            }
-          });
-
-          flatpickr(checkOut, {
-            dateFormat: "Y-m-d",
-            minDate: "today",
-            disable: disableRanges
-          });
-        }
-      });
-    </script>
 </body>
 </html>

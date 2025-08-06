@@ -19,7 +19,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('core.urls')),  # Main app for landing page and general site functionality
-    path('bookings/', include('bookings.urls')),
-    path('accounts/', include('users.urls')),
+    path('', include('core.urls', namespace='core')),  # updated
+    path('bookings/', include('bookings.urls', namespace='bookings')),  # updated
+    path('accounts/', include('users.urls', namespace='users')),  # updated
 ]

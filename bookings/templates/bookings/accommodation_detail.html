@@ -1,62 +1,38 @@
 {% extends 'base.html' %}
 {% load static %}
-  <!-- <link rel="stylesheet" href="{% static 'css/accommodation.css' %}" -->
+
+{% block title %}{{ accommodation.name }} | Glamping Portal{% endblock %}
 
 {% block content %}
-  <div class="container accommodation-detail">
-
-  <!-- Accommodation Title -->
-  <h1 class="accommodation-title">{{ accommodation.name }}</h1>
-
-  <!-- Image -->
-  {% if accommodation.image %}
-    <img src="{{ accommodation.image.url }}" alt="{{ accommodation.name }}" class="accommodation-image">
-  {% endif %}
-
-  <!-- Description -->
-  <div class="accommodation-description">
+<div class="accommodation-detail">
+    <h2>{{ accommodation.name }}</h2>
     <p>{{ accommodation.description }}</p>
-  </div>
 
-  <!-- Booking Form -->
-  <div class="booking-form-section">
-    <h2>Book this accommodation</h2>
-    <form method="post" novalidate>
-      {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit" class="btn btn-primary">Book Now</button>
+    {% if accommodation.image_landscape %}
+        <img src="{{ accommodation.image_landscape.url }}" alt="{{ accommodation.name }}" style="max-width:100%; height:auto;" />
+    {% endif %}
+
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Book Now</button>
     </form>
-  </div>
-
 </div>
-
-<!-- Flatpickr JS -->
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const bookedRanges = {{ booked_ranges_json|safe }};
-
-    const disableRanges = bookedRanges.map(range => ({
-      from: range.start,
-      to: range.end
-    }));
-
-    flatpickr("input[name='check_in']", {
-      dateFormat: "Y-m-d",
-      disable: disableRanges,
-      minDate: "today"
-    });
-
-    flatpickr("input[name='check_out']", {
-      dateFormat: "Y-m-d",
-      disable: disableRanges,
-      minDate: "today"
-    });
-  });
+<pre>{{ booked_ranges_json }}</pre>
+<!-- Embed booked ranges as JSON -->
+<script id="booked-ranges-data" type="application/json">
+    {{ booked_ranges_json|safe }}
 </script>
 
-
+<!-- Load flatpickr-init.js after JSON is in the DOM -->
+<script src="{% static 'js/flatpickr-init.js' %}"></script>
 {% endblock %}
 
