@@ -1,9 +1,9 @@
-{% extends 'base.html' %}
+{% extends "core/base.html" %}
+
+{% block title %}Booking Confirmed{% endblock %}
 
 {% block content %}
-<div class="success-message">
-    <h2>Booking Confirmed ✅</h2>
-    <p>Thank you for booking your glamping stay!</p>
-    <a href="/">Return to Home</a>
-</div>
+  <h2>Thank you for your booking!</h2>
+  <p>Your reservation has been successfully submitted. We’ll be in touch soon!</p>
+  <a href="/">Return Home</a>
 {% endblock %}

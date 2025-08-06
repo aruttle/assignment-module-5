@@ -1,67 +1,62 @@
-
-
 {% extends 'base.html' %}
 {% load static %}
+  <!-- <link rel="stylesheet" href="{% static 'css/accommodation.css' %}" -->
 
 {% block content %}
-<div class="accommodation-detail">
-    <h2>{{ accommodation.name }}</h2>
-    <picture>
-        <source srcset="{% static 'images/accommodations/'|add:accommodation.image_landscape %}" media="(min-width: 768px)">
-        <img src="{% static 'images/accommodations/'|add:accommodation.image_portrait %}" alt="{{ accommodation.name }}">
-    </picture>
+  <div class="container accommodation-detail">
+
+  <!-- Accommodation Title -->
+  <h1 class="accommodation-title">{{ accommodation.name }}</h1>
+
+  <!-- Image -->
+  {% if accommodation.image %}
+    <img src="{{ accommodation.image.url }}" alt="{{ accommodation.name }}" class="accommodation-image">
+  {% endif %}
+
+  <!-- Description -->
+  <div class="accommodation-description">
     <p>{{ accommodation.description }}</p>
+  </div>
 
-    <h3>Book this stay</h3>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Book Now</button>
+  <!-- Booking Form -->
+  <div class="booking-form-section">
+    <h2>Book this accommodation</h2>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-primary">Book Now</button>
     </form>
+  </div>
+
 </div>
-{% endblock %}
-
-{% block extra_scripts %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script>
-    flatpickr("#check_in_date", {
-        dateFormat: "Y-m-d",
-        minDate: "today"
-    });
-
-    flatpickr("#check_out_date", {
-        dateFormat: "Y-m-d",
-        minDate: "today"
-    });
-</script>
-{% endblock %}
-
-{% block extra_scripts %}
-<!-- Flatpickr CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 <!-- Flatpickr JS -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
-<!-- Optional: Load unavailable dates from a Django variable -->
 <script>
-    {% if unavailable_dates %}
-        const unavailableDates = {{ unavailable_dates|safe }};
-    {% else %}
-        const unavailableDates = [];
-    {% endif %}
-    
-    flatpickr("#check_in_date", {
-        dateFormat: "Y-m-d",
-        disable: unavailableDates,
-        minDate: "today"
+  document.addEventListener('DOMContentLoaded', function () {
+    const bookedRanges = {{ booked_ranges_json|safe }};
+
+    const disableRanges = bookedRanges.map(range => ({
+      from: range.start,
+      to: range.end
+    }));
+
+    flatpickr("input[name='check_in']", {
+      dateFormat: "Y-m-d",
+      disable: disableRanges,
+      minDate: "today"
     });
-    
-    flatpickr("#check_out_date", {
-        dateFormat: "Y-m-d",
-        disable: unavailableDates,
-        minDate: "today"
+
+    flatpickr("input[name='check_out']", {
+      dateFormat: "Y-m-d",
+      disable: disableRanges,
+      minDate: "today"
     });
+  });
 </script>
+
+
 {% endblock %}
+

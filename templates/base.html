@@ -1,9 +1,18 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
     <title>{% block title %}Glamping Portal{% endblock %}</title>
+    
+    <!-- Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    
+    <!-- Static files -->
+    <link rel="stylesheet" href="{% static 'css/accommodation.css' %}">
+
 </head>
+
 <body>
     <header>
         <h1>Welcome to Glamping Portal</h1>
@@ -15,12 +24,54 @@
 
     <main>
         {% block content %}
-        <!-- Page specific content  -->
+        <!-- Page specific content -->
         {% endblock %}
     </main>
 
     <footer>
         <p>© 2025 Glamping Portal</p>
     </footer>
+
+    <!-- Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <!-- Booking calendar logic -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const checkIn = document.getElementById("check_in");
+        const checkOut = document.getElementById("check_out");
+        const bookedDataEl = document.getElementById("booked-ranges-data");
+
+        if (checkIn && checkOut) {
+          let disableRanges = [];
+
+          // If booked ranges are passed from the view, parse and format them
+          if (bookedDataEl) {
+            const ranges = JSON.parse(bookedDataEl.textContent);
+            disableRanges = ranges.map(range => ({
+              from: range.start,
+              to: range.end
+            }));
+          }
+
+          flatpickr(checkIn, {
+            dateFormat: "Y-m-d",
+            minDate: "today",
+            disable: disableRanges,
+            onChange: function (selectedDates) {
+              if (selectedDates.length > 0) {
+                checkOut._flatpickr.set("minDate", selectedDates[0]);
+              }
+            }
+          });
+
+          flatpickr(checkOut, {
+            dateFormat: "Y-m-d",
+            minDate: "today",
+            disable: disableRanges
+          });
+        }
+      });
+    </script>
 </body>
 </html>
