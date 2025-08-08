@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}View Message | Glamping Portal{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Message from {{ message.sender.email }}</h2>
+
+    <div class="card mb-3">
+        <div class="card-header">
+            <strong>Subject:</strong> {{ message.subject }}
+        </div>
+        <div class="card-body">
+            <p class="card-text">{{ message.body }}</p>
+        </div>
+        <div class="card-footer text-muted">
+            Sent at {{ message.sent_at }}
+        </div>
+    </div>
+
+    <a href="{% url 'glamp_messaging:inbox' %}" class="btn btn-secondary">Back to Inbox</a>
+    <a href="{% url 'glamp_messaging:send_message' %}?to={{ message.sender.id }}" class="btn btn-primary">Reply</a>
+</div>
+{% endblock %}

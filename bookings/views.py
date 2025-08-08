@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from .models import Accommodation, Booking
 from .forms import BookingForm
 import json
@@ -54,3 +55,21 @@ def booking_success(request):
 
 def booking_list(request):
     return render(request, 'bookings/booking_list.html')
+
+def accommodation_list(request):
+    accommodations = Accommodation.objects.all()
+    return render(request, 'bookings/accommodation_list.html', {'accommodations': accommodations})
+
+@login_required
+def booking_create(request):
+    if request.method == 'POST':
+        form = BookingForm(request.POST)
+        if form.is_valid():
+            booking = form.save(commit=False)
+            booking.user = request.user
+            booking.save()
+            return redirect('bookings:booking_success')
+    else:
+        form = BookingForm()
+
+    return render(request, 'bookings/booking_form.html', {'form': form})

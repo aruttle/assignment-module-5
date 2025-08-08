@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Inbox | Glamping Portal{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Your Inbox</h2>
+
+    <ul class="list-group">
+        {% for message in messages %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>From:</strong> {{ message.sender.email }}<br>
+                    <strong>Subject:</strong> {{ message.subject }}<br>
+                    <small class="text-muted">Sent at {{ message.sent_at }}</small>
+                </div>
+                <a href="{% url 'glamp_messaging:view_message' message.id %}" class="btn btn-sm btn-outline-primary">View</a>
+            </li>
+        {% empty %}
+            <li class="list-group-item">You have no messages yet.</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{% url 'glamp_messaging:send_message' %}" class="btn btn-success mt-4">Send New Message</a>
+</div>
+{% endblock %}

@@ -2,37 +2,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="keywords" content="glamping, Shannon Estuary, eco-friendly holidays, Ireland camping, luxury camping, outdoor adventure, glamping Ireland, nature retreats, sustainable travel, scenic getaways">
+    <meta name="description" content="Escape to our eco-friendly glamping site near the Shannon Estuary. Enjoy luxury camping, nature, and unforgettable outdoor adventures in Ireland.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>{% block title %}Glamping Portal{% endblock %}</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Flatpickr CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
-    <!-- Your Static CSS -->
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/accommodation.css' %}">
 </head>
 <body>
-    <header>
-        <h1>Welcome to Glamping Portal</h1>
-        <nav>
-            <a href="{% url 'core:home' %}">Home</a> |
-            <a href="{% url 'bookings:booking_list' %}">Bookings</a>
-        </nav>
-    </header>
+    <a href="#main-content" class="visually-hidden-focusable">Skip to main content</a>
 
-    <main>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success sticky-top" role="navigation">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'core:home' %}">
+                <img src="{% static 'images/accommodations/logo.png' %}" alt="Glamping Logo" width="40" height="40" class="me-2">
+                Glamping Portal
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                 <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'core:home' %}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'bookings:booking_list' %}">Bookings</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'projects:project_list' %}">Projects</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'messaging:inbox' %}">Messages</a></li>
+                    {% if user.is_authenticated %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'users:profile' %}">Profile</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'users:logout' %}">Logout</a></li>
+                    {% else %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'users:login' %}">Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'users:register' %}">Register</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main id="main-content" class="container mt-4" role="main">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
         {% block content %}{% endblock %}
     </main>
 
-    <footer>
-        <p>© 2025 Glamping Portal</p>
+    <footer class="bg-dark text-light py-4 mt-5" role="contentinfo">
+        <div class="container text-center">
+            <p>&copy; 2025 Glamping Portal. All rights reserved.</p>
+        </div>
     </footer>
 
-    <!-- JS scripts -->
+    <!-- JS Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="{% static 'js/flatpickr-init.js' %}" defer></script>
 
+    {% block scripts %}{% endblock %}
 </body>
 </html>

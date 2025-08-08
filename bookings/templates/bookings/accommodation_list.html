@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}All Accommodations{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>All Accommodations</h2>
+    <div class="row">
+        {% for acc in accommodations %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="{{ acc.image.url }}" class="card-img-top" alt="{{ acc.name }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ acc.name }}</h5>
+                    <p class="card-text">{{ acc.description|truncatechars:100 }}</p>
+                    <a href="{% url 'bookings:accommodation_detail' acc.id %}" class="btn btn-success">View</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

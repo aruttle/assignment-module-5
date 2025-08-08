@@ -22,4 +22,9 @@ urlpatterns = [
     path('', include('core.urls', namespace='core')),  # updated
     path('bookings/', include('bookings.urls', namespace='bookings')),  # updated
     path('accounts/', include('users.urls', namespace='users')),  # updated
+    path('projects/', include('glamp_projects.urls', namespace='projects')),
+    # path('messaging/', include('glamp_messaging.urls', namespace='messaging')),
+    path('messages/', include('glamp_messaging.urls', namespace='glamp_messaging')),
+    path('users/', include('users.urls', namespace='users')),
+
 ]
