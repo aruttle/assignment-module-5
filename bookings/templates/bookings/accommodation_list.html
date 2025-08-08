@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block title %}All Accommodations{% endblock %}
 
 {% block content %}
@@ -8,7 +9,11 @@
         {% for acc in accommodations %}
         <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm">
-                <img src="{{ acc.image.url }}" class="card-img-top" alt="{{ acc.name }}">
+                {% if acc.image_landscape %}
+                    <img src="{{ acc.image_landscape.url }}" class="card-img-top" alt="{{ acc.name }}">
+                {% else %}
+                    <img src="{% static 'images/accommodations/default.jpg' %}" class="card-img-top" alt="Default image">
+                {% endif %}
                 <div class="card-body">
                     <h5 class="card-title">{{ acc.name }}</h5>
                     <p class="card-text">{{ acc.description|truncatechars:100 }}</p>
@@ -20,3 +25,4 @@
     </div>
 </div>
 {% endblock %}
+

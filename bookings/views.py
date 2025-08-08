@@ -47,7 +47,7 @@ def accommodation_detail(request, pk):
         'form': form,
         'booked_ranges_json': json.dumps(booked_ranges),
     }
-
+    print("Rendering bookings/accommodation_detail.html for:", accommodation.name) 
     return render(request, 'bookings/accommodation_detail.html', context)
 
 def booking_success(request):
@@ -62,14 +62,27 @@ def accommodation_list(request):
 
 @login_required
 def booking_create(request):
+    accommodation_id = request.GET.get('accommodation')
+    accommodation = None
+
+    if accommodation_id:
+        accommodation = get_object_or_404(Accommodation, pk=accommodation_id)
+
     if request.method == 'POST':
         form = BookingForm(request.POST)
         if form.is_valid():
             booking = form.save(commit=False)
             booking.user = request.user
+            if accommodation:
+                booking.accommodation = accommodation
+            elif form.cleaned_data.get('accommodation'):
+                booking.accommodation = form.cleaned_data['accommodation']
+            else:
+                messages.error(request, "Accommodation is required.")
+                return render(request, 'bookings/booking_form.html', {'form': form})
             booking.save()
             return redirect('bookings:booking_success')
     else:
-        form = BookingForm()
+        form = BookingForm(initial={'accommodation': accommodation})
 
     return render(request, 'bookings/booking_form.html', {'form': form})

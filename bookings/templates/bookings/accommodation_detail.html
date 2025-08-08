@@ -4,35 +4,26 @@
 {% block title %}{{ accommodation.name }} | Glamping Portal{% endblock %}
 
 {% block content %}
-<div class="accommodation-detail">
+
+<div class="accommodation-detail container mt-4">
     <h2>{{ accommodation.name }}</h2>
     <p>{{ accommodation.description }}</p>
 
     {% if accommodation.image_landscape %}
-        <img src="{{ accommodation.image_landscape.url }}" alt="{{ accommodation.name }}" style="max-width:100%; height:auto;" />
-    {% endif %}
-
-    {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <li class="{{ message.tags }}">{{ message }}</li>
-            {% endfor %}
-        </ul>
+        <img src="{{ accommodation.image_landscape.url }}" alt="{{ accommodation.name }}" class="img-fluid rounded shadow mb-4">
+    {% else %}
+        <img src="{% static 'images/accommodations/default.jpg' %}" alt="Default image" class="img-fluid rounded shadow mb-4">
     {% endif %}
 
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Book Now</button>
+        <button type="submit" class="btn btn-success">Book Now</button>
     </form>
 </div>
-<pre>{{ booked_ranges_json }}</pre>
-<!-- Embed booked ranges as JSON -->
+
 <script id="booked-ranges-data" type="application/json">
     {{ booked_ranges_json|safe }}
 </script>
-
-<!-- Load flatpickr-init.js after JSON is in the DOM -->
 <script src="{% static 'js/flatpickr-init.js' %}"></script>
 {% endblock %}
-
