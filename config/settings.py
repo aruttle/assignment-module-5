@@ -29,7 +29,6 @@ INSTALLED_APPS = [
     'core',
     'users',
     'bookings',    
-    'messaging',
     'projects',
     'glamp_projects',
     'glamp_messaging',
