@@ -21,8 +21,8 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('core.urls', namespace='core')),  # updated
-    path('bookings/', include('bookings.urls', namespace='bookings')),  # updated
+    path('', include('core.urls', namespace='core')),  
+    path('bookings/', include('bookings.urls', namespace='bookings')),  
     path('projects/', include('glamp_projects.urls', namespace='projects')),
     path('messages/', include('glamp_messaging.urls', namespace='glamp_messaging')),
     path('users/', include('users.urls', namespace='users')),

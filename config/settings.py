@@ -1,3 +1,4 @@
+# config/settings.py
 import os
 from pathlib import Path
 from decouple import config
@@ -7,13 +8,18 @@ import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # --- Secret Key ---
+# Pulled from env in both local (.env) and Render
 SECRET_KEY = config('SECRET_KEY', default='insecure-secret-key-for-dev')
 
 # --- Debug Mode ---
 DEBUG = config('DEBUG', default=True, cast=bool)
 
 # --- Allowed Hosts ---
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1,localhost').split(',')
+# Read from env; default includes your Render domain + local hosts
+ALLOWED_HOSTS = config(
+    'ALLOWED_HOSTS',
+    default='assignment-module-5.onrender.com,127.0.0.1,localhost'
+).split(',')
 
 # --- Installed Apps ---
 INSTALLED_APPS = [
@@ -28,11 +34,12 @@ INSTALLED_APPS = [
     # Your apps
     'core',
     'users',
-    'bookings',    
+    'bookings',
     'projects',
     'glamp_projects',
     'glamp_messaging',
 ]
+
 # --- Middleware ---
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -65,11 +72,9 @@ TEMPLATES = [
     },
 ]
 
-# --- WSGI ---
+# --- WSGI / ASGI ---
 WSGI_APPLICATION = 'config.wsgi.application'
-# --- ASGI ---
 ASGI_APPLICATION = 'config.asgi.application'
-
 
 # --- Database ---
 DATABASES = {
@@ -98,7 +103,15 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'  # For Render deployment
 
-# --- Media Files (if needed later) ---
+# Use Whitenoise's hashed/compressed storage in production
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"
+    },
+}
+
+# --- Media Files ---
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
@@ -106,16 +119,16 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # --- Login URLs ---
-# LOGIN_URL = 'login'
-# LOGIN_REDIRECT_URL = 'dashboard'
-# LOGOUT_REDIRECT_URL = 'login'
 LOGIN_REDIRECT_URL = 'users:profile'
-LOGOUT_REDIRECT_URL = 'core:home'  
+LOGOUT_REDIRECT_URL = 'core:home'
 LOGIN_URL = 'users:login'
 
+# --- CSRF Trusted Origins ---
+# Read from env; default includes localhost and your Render domain over HTTPS
+CSRF_TRUSTED_ORIGINS = config(
+    'CSRF_TRUSTED_ORIGINS',
+    default='https://assignment-module-5.onrender.com,http://localhost:8000,http://127.0.0.1:8000'
+).split(',')
 
-# ---TRUSTED_ORIGINS ---
-CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:8000',
-    'http://127.0.0.1:8000',
-]
+# (Optional but useful on Render behind proxy/SSL)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
