@@ -124,6 +124,9 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 # If you ever switch back to manifest, you can relax strict mode:
 # WHITENOISE_MANIFEST_STRICT = False
 
+# Avoid compressing JS during collectstatic to prevent race/FileNotFound issues
+WHITENOISE_SKIP_COMPRESS_EXTENSIONS = ['.js']
+
 if DEBUG:
     # Local file storage for development
     MEDIA_URL = '/media/'
