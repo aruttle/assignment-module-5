@@ -115,6 +115,10 @@ TIME_ZONE = 'Europe/Dublin'
 USE_I18N = True
 USE_TZ = True
 
+# Backwards-compat for packages expecting STATICFILES_STORAGE
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+
 # --- Static & Media Files ---
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
