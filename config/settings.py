@@ -4,18 +4,15 @@ from pathlib import Path
 from decouple import config
 import dj_database_url
 
-# --- Base Directory ---
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # --- Secret Key ---
-# Pulled from env in both local (.env) and Render
 SECRET_KEY = config('SECRET_KEY', default='insecure-secret-key-for-dev')
 
 # --- Debug Mode ---
 DEBUG = config('DEBUG', default=True, cast=bool)
 
 # --- Allowed Hosts ---
-# Read from env; default includes your Render domain + local hosts
 ALLOWED_HOSTS = config(
     'ALLOWED_HOSTS',
     default='assignment-module-5.onrender.com,127.0.0.1,localhost'
@@ -23,13 +20,17 @@ ALLOWED_HOSTS = config(
 
 # --- Installed Apps ---
 INSTALLED_APPS = [
-    # Django core apps...
+    # Django core apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Cloudinary for media
+    'cloudinary_storage',
+    'cloudinary',
 
     # Your apps
     'core',
@@ -43,7 +44,7 @@ INSTALLED_APPS = [
 # --- Middleware ---
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Static files for Render
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -52,14 +53,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# --- Root URL Configuration ---
-ROOT_URLCONF = 'config.urls'
-
 # --- Templates ---
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # Global templates folder
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -72,7 +70,7 @@ TEMPLATES = [
     },
 ]
 
-# --- WSGI / ASGI ---
+# --- WSGI/ASGI ---
 WSGI_APPLICATION = 'config.wsgi.application'
 ASGI_APPLICATION = 'config.asgi.application'
 
@@ -98,22 +96,27 @@ TIME_ZONE = 'Europe/Dublin'
 USE_I18N = True
 USE_TZ = True
 
-# --- Static Files ---
+# --- Static & Media Files ---
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
-STATIC_ROOT = BASE_DIR / 'staticfiles'  # For Render deployment
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Use Whitenoise's hashed/compressed storage in production
-STORAGES = {
-    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"
-    },
-}
-
-# --- Media Files ---
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+if DEBUG:
+    # Local storage for development
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
+    STORAGES = {
+        "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+        "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
+    }
+else:
+    # Cloudinary storage for production
+    CLOUDINARY_URL = config('CLOUDINARY_URL')  # from Render environment variables
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    STORAGES = {
+        "default": {"BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage"},
+        "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
+    }
 
 # --- Default Primary Key Field ---
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -124,11 +127,10 @@ LOGOUT_REDIRECT_URL = 'core:home'
 LOGIN_URL = 'users:login'
 
 # --- CSRF Trusted Origins ---
-# Read from env; default includes localhost and your Render domain over HTTPS
 CSRF_TRUSTED_ORIGINS = config(
     'CSRF_TRUSTED_ORIGINS',
     default='https://assignment-module-5.onrender.com,http://localhost:8000,http://127.0.0.1:8000'
 ).split(',')
 
-# (Optional but useful on Render behind proxy/SSL)
+# Behind proxy
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

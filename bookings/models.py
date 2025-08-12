@@ -4,9 +4,8 @@ from django.conf import settings
 class Accommodation(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
-    price_per_night = models.DecimalField(max_digits=6, decimal_places=2)
-    image_landscape = models.ImageField(upload_to='accommodations/', blank=True, null=True)
-    image_portrait = models.ImageField(upload_to='accommodations/', blank=True, null=True)
+    image_landscape = models.ImageField(upload_to='accommodations/')
+    image_portrait = models.ImageField(upload_to='accommodations/')
 
     def __str__(self):
         return self.name
