@@ -21,12 +21,14 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('core.urls', namespace='core')),  
-    path('bookings/', include('bookings.urls', namespace='bookings')),  
+    path('', include('core.urls', namespace='core')),
+    path('bookings/', include('bookings.urls', namespace='bookings')),
     path('projects/', include('glamp_projects.urls', namespace='projects')),
     path('messages/', include('glamp_messaging.urls', namespace='glamp_messaging')),
     path('users/', include('users.urls', namespace='users')),
-
+    path('api/', include('bookings.api.urls')),
+    path('api-auth/', include('rest_framework.urls')),
 ]
+
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
