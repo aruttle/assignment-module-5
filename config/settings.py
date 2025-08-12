@@ -59,7 +59,7 @@ REST_FRAMEWORK = {
 # --- Middleware ---
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # serves static; no compression needed
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -119,29 +119,23 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# WhiteNoise: use non-manifest storage to avoid strict collectstatic failures
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
-# If you ever switch back to manifest, you can relax strict mode:
-# WHITENOISE_MANIFEST_STRICT = False
-
-# Avoid compressing JS during collectstatic to prevent race/FileNotFound issues
-WHITENOISE_SKIP_COMPRESS_EXTENSIONS = ['.js']
+# Use plain storage to avoid WhiteNoise compression/post-process issues on Render
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 if DEBUG:
-    # Local file storage for development
     MEDIA_URL = '/media/'
     MEDIA_ROOT = BASE_DIR / 'media'
     STORAGES = {
         'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
-        'staticfiles': {'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage'},
+        'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
     }
 else:
-    # Cloudinary for user uploads in production
-    CLOUDINARY_URL = config('CLOUDINARY_URL')  # set in Render env
+    # Cloudinary for media in production
+    CLOUDINARY_URL = config('CLOUDINARY_URL')
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
     STORAGES = {
         'default': {'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage'},
-        'staticfiles': {'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage'},
+        'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
     }
 
 # --- Default Primary Key Field ---
