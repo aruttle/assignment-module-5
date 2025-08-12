@@ -41,20 +41,20 @@ INSTALLED_APPS = [
     'glamp_messaging',
 ]
 
-INSTALLED_APPS += ["rest_framework"]
+# Django REST Framework
+INSTALLED_APPS += ['rest_framework']
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication",
-        # Later: "rest_framework_simplejwt.authentication.JWTAuthentication",
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticatedOrReadOnly",
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": 10,
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
 }
-
 
 # --- Middleware ---
 MIDDLEWARE = [
@@ -70,7 +70,6 @@ MIDDLEWARE = [
 
 # --- Root URL Configuration ---
 ROOT_URLCONF = 'config.urls'
-
 
 # --- Templates ---
 TEMPLATES = [
@@ -115,30 +114,31 @@ TIME_ZONE = 'Europe/Dublin'
 USE_I18N = True
 USE_TZ = True
 
-# Backwards-compat for packages expecting STATICFILES_STORAGE
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-
 # --- Static & Media Files ---
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+# WhiteNoise: use non-manifest storage to avoid strict collectstatic failures
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+# If you ever switch back to manifest, you can relax strict mode:
+# WHITENOISE_MANIFEST_STRICT = False
+
 if DEBUG:
-    # Local storage for development
+    # Local file storage for development
     MEDIA_URL = '/media/'
     MEDIA_ROOT = BASE_DIR / 'media'
     STORAGES = {
-        "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
-        "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
+        'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+        'staticfiles': {'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage'},
     }
 else:
-    # Cloudinary storage for production
-    CLOUDINARY_URL = config('CLOUDINARY_URL')  # from Render environment variables
+    # Cloudinary for user uploads in production
+    CLOUDINARY_URL = config('CLOUDINARY_URL')  # set in Render env
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
     STORAGES = {
-        "default": {"BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage"},
-        "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
+        'default': {'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage'},
+        'staticfiles': {'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage'},
     }
 
 # --- Default Primary Key Field ---
