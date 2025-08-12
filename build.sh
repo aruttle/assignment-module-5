@@ -9,4 +9,4 @@ pip install -r requirements.txt
 python manage.py migrate
 
 # Collect static files without prompting
-python manage.py collectstatic --noinput --clear
+python manage.py collectstatic --noinput 
