@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-
 {% block title %}Inbox | Glamping Portal{% endblock %}
 
 {% block content %}
@@ -22,7 +21,8 @@
             • {{ m.sent_at|date:"Y-m-d H:i" }}
           </div>
         </div>
-        <a href="{% url 'glamp_messaging:view_message' m.id %}" class="btn btn-sm btn-outline-primary">View</a>
+        <a class="btn btn-sm btn-outline-primary"
+           href="{% url 'glamp_messaging:view_message' m.id %}">View</a>
       </li>
     {% empty %}
       <li class="list-group-item">You have no messages yet.</li>
