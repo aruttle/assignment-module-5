@@ -1,57 +1,37 @@
-# glamp_messaging/views.py
-from django.contrib import messages as flash
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect, render
-
-from .forms import MessageForm
+from django.contrib import messages as flash  # avoid name clash in this file
 from .models import Message
-
+from .forms import MessageForm
 
 @login_required
 def inbox(request):
-    """
-    Show only the user's received messages.
-    Use a safe ordering and avoid any 'messages' name collision.
-    """
-    try:
-        qs = (
-            Message.objects
-            .filter(recipient=request.user)
-            .select_related("sender", "recipient")
-            .order_by("-id")  # safe on every DB; avoids sent_at mismatches
-        )
-        ctx = {"inbox_messages": qs}
-        return render(request, "glamp_messaging/inbox.html", ctx)
-    except Exception as e:
-        # Surface the real error in logs and show a friendly page instead of 500
-        print("INBOX ERROR:", repr(e))
-        flash.error(request, "Sorry, we couldn’t load your inbox.")
-        return render(request, "glamp_messaging/inbox.html", {"inbox_messages": []})
-
+    qs = (
+        Message.objects
+        .select_related('sender', 'recipient')
+        .filter(recipient=request.user)
+        .order_by('-sent_at')
+    )
+    return render(request, 'glamp_messaging/inbox.html', {'items': qs})
 
 @login_required
 def view_message(request, message_id):
-    m = get_object_or_404(
-        Message.objects.select_related("sender", "recipient"),
-        id=message_id,
-        recipient=request.user,
-    )
-    if not m.is_read:
-        m.is_read = True
-        m.save(update_fields=["is_read"])
-    return render(request, "glamp_messaging/view_message.html", {"message": m})
-
+    msg = get_object_or_404(Message, id=message_id, recipient=request.user)
+    if not msg.is_read:
+        # fast, avoids races
+        Message.objects.filter(pk=msg.pk).update(is_read=True)
+    return render(request, 'glamp_messaging/view_message.html', {'message': msg})
 
 @login_required
 def send_message(request):
-    if request.method == "POST":
+    if request.method == 'POST':
         form = MessageForm(request.POST)
         if form.is_valid():
-            m = form.save(commit=False)
-            m.sender = request.user
-            m.save()
+            obj = form.save(commit=False)
+            obj.sender = request.user
+            obj.save()
             flash.success(request, "Message sent.")
-            return redirect("glamp_messaging:inbox")
+            return redirect('glamp_messaging:inbox')
     else:
         form = MessageForm()
-    return render(request, "glamp_messaging/send_message.html", {"form": form})
+    return render(request, 'glamp_messaging/send_message.html', {'form': form})

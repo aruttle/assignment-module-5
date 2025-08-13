@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+
 {% block title %}Inbox | Glamping Portal{% endblock %}
 
 {% block content %}
@@ -6,23 +7,15 @@
   <h2>Your Inbox</h2>
 
   <ul class="list-group">
-    {% for m in inbox_messages %}
+    {% for m in items %}
       <li class="list-group-item d-flex justify-content-between align-items-center">
         <div>
-          <div class="fw-semibold">
-            {{ m.subject|default:"(No subject)" }}
-            {% if not m.is_read %}
-              <span class="badge text-bg-primary ms-2">New</span>
-            {% endif %}
-          </div>
-          <div class="small text-muted">
-            From:
-            {{ m.sender.get_full_name|default:m.sender.username|default:m.sender.email }}
-            • {{ m.sent_at|date:"Y-m-d H:i" }}
-          </div>
+          <strong>From:</strong>
+          {{ m.sender.get_full_name|default:m.sender.username|default:m.sender.email }}<br>
+          <strong>Subject:</strong> {{ m.subject|default:"(no subject)" }}<br>
+          <small class="text-muted">Sent at {{ m.sent_at|date:"Y-m-d H:i" }}</small>
         </div>
-        <a class="btn btn-sm btn-outline-primary"
-           href="{% url 'glamp_messaging:view_message' m.id %}">View</a>
+        <a href="{% url 'glamp_messaging:view_message' m.id %}" class="btn btn-sm btn-outline-primary">View</a>
       </li>
     {% empty %}
       <li class="list-group-item">You have no messages yet.</li>
