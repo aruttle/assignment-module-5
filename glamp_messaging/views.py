@@ -6,18 +6,22 @@ from .forms import MessageForm
 
 @login_required
 def inbox(request):
-    qs = (Message.objects
-          .select_related('sender', 'recipient')
-          .filter(recipient=request.user)
-          .order_by('-sent_at'))
-    return render(request, 'glamp_messaging/inbox.html', {'items': qs})
+    items = (
+        Message.objects
+        .select_related('sender', 'recipient')
+        .filter(recipient=request.user)
+        .order_by('-sent_at')
+    )
+    return render(request, 'glamp_messaging/inbox.html', {'items': items})
 
 @login_required
 def view_message(request, message_id):
-    msg = get_object_or_404(Message, id=message_id, recipient=request.user)
-    if not msg.is_read:
-        Message.objects.filter(pk=msg.pk).update(is_read=True)
-    return render(request, 'glamp_messaging/view_message.html', {'message': msg})
+    message = get_object_or_404(Message, id=message_id, recipient=request.user)
+    if not message.is_read:
+        # Small optimization: avoid race by updating only this row
+        Message.objects.filter(pk=message.pk, is_read=False).update(is_read=True)
+        message.is_read = True
+    return render(request, 'glamp_messaging/view_message.html', {'message': message})
 
 @login_required
 def send_message(request):
