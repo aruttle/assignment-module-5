@@ -51,8 +51,17 @@
             {% url 'users:profile' as profile_url %}
             <li class="nav-item"><a class="nav-link" href="{{ profile_url|default:'#' }}">Profile</a></li>
 
-            {% url 'users:logout' as logout_url %}
-            <li class="nav-item"><a class="nav-link" href="{{ logout_url|default:'#' }}">Logout</a></li>
+            {# Switch account (logs out then shows login) #}
+            {% url 'users:switch_user' as switch_url %}
+            <li class="nav-item"><a class="nav-link" href="{{ switch_url|default:'#' }}">Switch account</a></li>
+
+            {# Secure logout via POST form #}
+            <li class="nav-item">
+              <form method="post" action="{% url 'users:logout' %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-link nav-link p-0">Logout</button>
+              </form>
+            </li>
           {% else %}
             {% url 'users:login' as login_url %}
             <li class="nav-item"><a class="nav-link" href="{{ login_url|default:'#' }}">Login</a></li>
