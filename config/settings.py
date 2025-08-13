@@ -6,13 +6,11 @@ import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# --- Secret Key ---
+# --- Secrets & Debug ---
 SECRET_KEY = config('SECRET_KEY', default='insecure-secret-key-for-dev')
-
-# --- Debug Mode ---
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-# --- Allowed Hosts ---
+# --- Hosts ---
 ALLOWED_HOSTS = config(
     'ALLOWED_HOSTS',
     default='assignment-module-5.onrender.com,127.0.0.1,localhost'
@@ -20,30 +18,31 @@ ALLOWED_HOSTS = config(
 
 # --- Installed Apps ---
 INSTALLED_APPS = [
-    # Django core apps
+    # Django core
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
 
-    # Cloudinary media storage (order matters)
+    # Cloudinary (order matters: storage before staticfiles)
     'cloudinary_storage',
     'django.contrib.staticfiles',
     'cloudinary',
 
-    # Your apps
+    # Project apps
     'core',
     'users',
     'bookings',
     'projects',
     'glamp_projects',
     'glamp_messaging',
+
+    # API
+    'rest_framework',
 ]
 
-# Django REST Framework
-INSTALLED_APPS += ['rest_framework']
-
+# --- DRF ---
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
@@ -59,7 +58,7 @@ REST_FRAMEWORK = {
 # --- Middleware ---
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # serves static; no compression needed
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # serve static on Render
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -68,8 +67,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# --- Root URL Configuration ---
+# --- URLs / WSGI / ASGI ---
 ROOT_URLCONF = 'config.urls'
+WSGI_APPLICATION = 'config.wsgi.application'
+ASGI_APPLICATION = 'config.asgi.application'
 
 # --- Templates ---
 TEMPLATES = [
@@ -88,19 +89,13 @@ TEMPLATES = [
     },
 ]
 
-# --- WSGI/ASGI ---
-WSGI_APPLICATION = 'config.wsgi.application'
-ASGI_APPLICATION = 'config.asgi.application'
-
 # --- Database ---
 DATABASES = {
     'default': dj_database_url.config(default=config('DATABASE_URL'))
 }
 
-# --- Custom User Model ---
+# --- Auth ---
 AUTH_USER_MODEL = 'users.CustomUser'
-
-# --- Password Validation ---
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -108,45 +103,48 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# --- Language & Timezone ---
+# --- I18N ---
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Europe/Dublin'
 USE_I18N = True
 USE_TZ = True
 
-# --- Static & Media Files ---
+# --- Static & Media ---
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Use plain storage to avoid WhiteNoise compression/post-process issues on Render
+# Important: use plain StaticFilesStorage so WhiteNoise does NOT post-process/compress
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
-WHITENOISE_SKIP_COMPRESS_EXTENSIONS = ['.js']  # avoid JS compression races
+if DEBUG:
+    # Local media storage
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
+    STORAGES = {
+        'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+        'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
+    }
+else:
+    # Production: Cloudinary for uploaded media
+    CLOUDINARY_URL = config('CLOUDINARY_URL')  # set in Render env
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    STORAGES = {
+        'default': {'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage'},
+        'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
+    }
 
-# New-style STORAGES (override staticfiles to WhiteNoise everywhere)
-STORAGES = {
-    "default": (
-        {"BACKEND": "django.core.files.storage.FileSystemStorage"}
-        if DEBUG else
-        {"BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage"}
-    ),
-    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedStaticFilesStorage"},
-}
-
-# --- Default Primary Key Field ---
+# --- Defaults ---
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# --- Login URLs ---
+# --- Auth redirects ---
 LOGIN_REDIRECT_URL = 'users:profile'
 LOGOUT_REDIRECT_URL = 'core:home'
 LOGIN_URL = 'users:login'
 
-# --- CSRF Trusted Origins ---
+# --- Security / Proxy ---
 CSRF_TRUSTED_ORIGINS = config(
     'CSRF_TRUSTED_ORIGINS',
     default='https://assignment-module-5.onrender.com,http://localhost:8000,http://127.0.0.1:8000'
 ).split(',')
-
-# Behind proxy
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
