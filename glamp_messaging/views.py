@@ -7,7 +7,6 @@ from .forms import MessageForm
 
 @login_required
 def inbox(request):
-    # Only messages sent TO the current user
     qs = (
         Message.objects
         .filter(recipient=request.user)
@@ -15,6 +14,7 @@ def inbox(request):
         .order_by("-sent_at")
     )
     return render(request, "glamp_messaging/inbox.html", {"inbox_messages": qs})
+
 
 
 @login_required
