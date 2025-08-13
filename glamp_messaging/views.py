@@ -1,29 +1,45 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.http import HttpResponseForbidden
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.decorators import login_required
 from .models import Message
 from .forms import MessageForm
 
 
 @login_required
 def inbox(request):
-    # Show newest first; prefetch sender for fewer queries
-    inbox_qs = (
+    msgs = (
         Message.objects
         .filter(recipient=request.user)
         .select_related("sender")
         .order_by("-sent_at")
     )
-    return render(request, "glamp_messaging/inbox.html", {"messages": inbox_qs})
+    return render(request, "glamp_messaging/inbox.html", {"messages": msgs})
 
 
 @login_required
 def view_message(request, message_id):
-    msg = get_object_or_404(Message, id=message_id, recipient=request.user)
-    if not msg.is_read:
-        msg.is_read = True
-        msg.save(update_fields=["is_read"])
-    return render(request, "glamp_messaging/view_message.html", {"message": msg})
+    # Fetch with related users to avoid extra queries
+    msg = get_object_or_404(
+        Message.objects.select_related("sender", "recipient"),
+        id=message_id,
+    )
+
+    # Allow either recipient or sender to view; forbid others
+    if msg.recipient_id != request.user.id and msg.sender_id != request.user.id:
+        return HttpResponseForbidden("You do not have permission to view this message.")
+
+    # Only mark read when the RECIPIENT opens it
+    if request.user.id == msg.recipient_id and not getattr(msg, "is_read", False):
+        try:
+            msg.is_read = True
+            msg.save(update_fields=["is_read"])
+        except Exception:
+            # If your model doesn't have is_read, we just ignore
+            pass
+
+    return render(request, "glamp_messaging/inbox.html", {"inbox_messages": msgs})
+
 
 
 @login_required
@@ -31,15 +47,12 @@ def send_message(request):
     if request.method == "POST":
         form = MessageForm(request.POST)
         if form.is_valid():
-            msg = form.save(commit=False)
-            msg.sender = request.user
-            msg.save()
+            m = form.save(commit=False)
+            m.sender = request.user
+            m.save()
             messages.success(request, "Message sent.")
-            # IMPORTANT: use the correct namespace from config.urls include()
             return redirect("glamp_messaging:inbox")
-        else:
-            messages.error(request, "Please fix the errors below.")
+        messages.error(request, "Please fix the errors below.")
     else:
         form = MessageForm()
-
     return render(request, "glamp_messaging/send_message.html", {"form": form})
