@@ -1,24 +1,21 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages as flash  # avoid name clash in this file
+from django.contrib import messages as flash
 from .models import Message
 from .forms import MessageForm
 
 @login_required
 def inbox(request):
-    qs = (
-        Message.objects
-        .select_related('sender', 'recipient')
-        .filter(recipient=request.user)
-        .order_by('-sent_at')
-    )
+    qs = (Message.objects
+          .select_related('sender', 'recipient')
+          .filter(recipient=request.user)
+          .order_by('-sent_at'))
     return render(request, 'glamp_messaging/inbox.html', {'items': qs})
 
 @login_required
 def view_message(request, message_id):
     msg = get_object_or_404(Message, id=message_id, recipient=request.user)
     if not msg.is_read:
-        # fast, avoids races
         Message.objects.filter(pk=msg.pk).update(is_read=True)
     return render(request, 'glamp_messaging/view_message.html', {'message': msg})
 

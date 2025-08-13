@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-
 {% block title %}Inbox | Glamping Portal{% endblock %}
 
 {% block content %}
@@ -13,7 +12,7 @@
           <strong>From:</strong>
           {{ m.sender.get_full_name|default:m.sender.username|default:m.sender.email }}<br>
           <strong>Subject:</strong> {{ m.subject|default:"(no subject)" }}<br>
-          <small class="text-muted">Sent at {{ m.sent_at|date:"Y-m-d H:i" }}</small>
+          <small class="text-muted">{{ m.sent_at|date:"Y-m-d H:i" }}</small>
         </div>
         <a href="{% url 'glamp_messaging:view_message' m.id %}" class="btn btn-sm btn-outline-primary">View</a>
       </li>
