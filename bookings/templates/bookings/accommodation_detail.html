@@ -4,26 +4,39 @@
 {% block title %}{{ accommodation.name }} | Glamping Portal{% endblock %}
 
 {% block content %}
-
 <div class="accommodation-detail container mt-4">
-    <h2>{{ accommodation.name }}</h2>
-    <p>{{ accommodation.description }}</p>
+  <h2 class="mb-2">{{ accommodation.name }}</h2>
+  {% if accommodation.price_per_night %}
+    <p class="text-muted">From €{{ accommodation.price_per_night }} / night</p>
+  {% endif %}
 
-    {% if accommodation.image_landscape %}
-        <img src="{{ accommodation.image_landscape.url }}" alt="{{ accommodation.name }}" class="img-fluid rounded shadow mb-4">
-    {% else %}
-        <img src="{% static 'images/accommodations/default.jpg' %}" alt="Default image" class="img-fluid rounded shadow mb-4">
-    {% endif %}
+  <p>{{ accommodation.description }}</p>
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-success">Book Now</button>
-    </form>
+  {% if accommodation.image_landscape %}
+    <img
+      src="{{ accommodation.image_landscape.url }}"
+      alt="{{ accommodation.name }}"
+      class="img-fluid rounded shadow mb-4"
+      loading="lazy">
+  {% else %}
+    <img
+      src="{% static 'images/accommodations/default.jpg' %}"
+      alt="Default image"
+      class="img-fluid rounded shadow mb-4"
+      loading="lazy">
+  {% endif %}
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Book Now</button>
+  </form>
 </div>
+{% endblock %}
 
-<script id="booked-ranges-data" type="application/json">
+{% block scripts %}
+  <!-- Just provide the data. base.html already includes flatpickr-init.js -->
+  <script id="booked-ranges-data" type="application/json">
     {{ booked_ranges_json|safe }}
-</script>
-<script src="{% static 'js/flatpickr-init.js' %}"></script>
+  </script>
 {% endblock %}
