@@ -1,29 +1,28 @@
+# users/urls.py
 from django.urls import path
-from django.contrib.auth import views as auth_views
-from . import views
+from django.contrib.auth.views import LogoutView
+from .views import register, profile, switch_user, EmailLoginView
 
-app_name = 'users'
+app_name = "users"
 
 urlpatterns = [
-    path('register/', views.register, name='register'),
-    path('profile/', views.profile, name='profile'),
+    path("register/", register, name="register"),
+    path("profile/", profile, name="profile"),
 
+    # Login (email-based form; redirects if already authenticated)
     path(
-        'login/',
-        auth_views.LoginView.as_view(
-            template_name='registration/login.html',  
-            redirect_authenticated_user=True,
-        ),
-        name='login',
+        "login/",
+        EmailLoginView.as_view(redirect_authenticated_user=True),
+        name="login",
     ),
 
-    
+    # Secure logout (POST from navbar form); send back to home
     path(
-        'logout/',
-        auth_views.LogoutView.as_view(next_page='core:home'),
-        name='logout',
+        "logout/",
+        LogoutView.as_view(next_page="core:home"),
+        name="logout",
     ),
 
-    
-    path('switch/', views.switch_user, name='switch_user'),
+    # Quick “switch account” helper: logs out, then take to login
+    path("switch/", switch_user, name="switch_user"),
 ]
