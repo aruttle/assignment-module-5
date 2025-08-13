@@ -117,6 +117,8 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # Important: use plain StaticFilesStorage so WhiteNoise does NOT post-process/compress
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
+WHITENOISE_USE_FINDERS = True
+
 if DEBUG:
     # Local media storage
     MEDIA_URL = '/media/'
