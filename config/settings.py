@@ -122,21 +122,17 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # Use plain storage to avoid WhiteNoise compression/post-process issues on Render
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
-if DEBUG:
-    MEDIA_URL = '/media/'
-    MEDIA_ROOT = BASE_DIR / 'media'
-    STORAGES = {
-        'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
-        'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
-    }
-else:
-    # Cloudinary for media in production
-    CLOUDINARY_URL = config('CLOUDINARY_URL')
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-    STORAGES = {
-        'default': {'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage'},
-        'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
-    }
+WHITENOISE_SKIP_COMPRESS_EXTENSIONS = ['.js']  # avoid JS compression races
+
+# New-style STORAGES (override staticfiles to WhiteNoise everywhere)
+STORAGES = {
+    "default": (
+        {"BACKEND": "django.core.files.storage.FileSystemStorage"}
+        if DEBUG else
+        {"BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage"}
+    ),
+    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedStaticFilesStorage"},
+}
 
 # --- Default Primary Key Field ---
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
