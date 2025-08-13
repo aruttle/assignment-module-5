@@ -12,14 +12,14 @@
         <div>
           <div class="fw-semibold">
             {{ m.subject|default:"(No subject)" }}
-            {% if m.recipient_id == request.user.id and not m.is_read %}
+            {% if not m.is_read %}
               <span class="badge text-bg-primary ms-2">New</span>
             {% endif %}
           </div>
           <div class="small text-muted">
             From:
             {{ m.sender.get_full_name|default:m.sender.username|default:m.sender.email }}
-            &nbsp;•&nbsp; {{ m.sent_at|date:"Y-m-d H:i" }}
+            • {{ m.sent_at|date:"Y-m-d H:i" }}
           </div>
         </div>
         <a href="{% url 'glamp_messaging:view_message' m.id %}" class="btn btn-sm btn-outline-primary">View</a>
