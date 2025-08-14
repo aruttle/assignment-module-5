@@ -9,8 +9,7 @@ from .forms import MessageForm
 def inbox(request):
     """
     Show messages where the logged-in user is the recipient.
-    Extra defensive: select_related + try/except so a bad row
-    won't 500 the whole page.
+    Defensive: select_related + try/except so a bad row won't 500 the page.
     """
     try:
         qs = (
@@ -46,34 +45,39 @@ def view_message(request, message_id):
 
 @login_required
 def send_message(request):
+    """
+    Compose/send a message. Non-admins may only send to admins.
+    """
     if request.method == 'POST':
         form = MessageForm(request.POST, user=request.user)
         if form.is_valid():
             msg = form.save(commit=False)
 
-            
+            # Server-side enforcement: non-admins may only send to admins
             if not (request.user.is_staff or request.user.is_superuser):
-                if not (msg.recipient.is_staff or msg.recipient.is_superuser):
-                    flash.error(request, "You can only message the admin team.")
-                    return redirect('glamp_messaging:send_message')
+                if not (msg.recipient and (msg.recipient.is_staff or msg.recipient.is_superuser)):
+                    form.add_error('recipient', 'You can only message the admin team.')
+                    return render(request, 'glamp_messaging/send_message.html', {'form': form})
 
             msg.sender = request.user
             msg.save()
             flash.success(request, "Message sent.")
             return redirect('glamp_messaging:inbox')
+        # If invalid, fall through to render with errors
     else:
         form = MessageForm(user=request.user)
-
+        # Helpful notice if there are no admins to message
         if not (request.user.is_staff or request.user.is_superuser) and form.fields['recipient'].queryset.count() == 0:
             flash.error(request, "There are no admin accounts available to receive messages.")
 
     return render(request, 'glamp_messaging/send_message.html', {'form': form})
 
+
 @login_required
 def delete_message(request, message_id):
     """
     Allow sender or recipient to delete a message.
-    GET -> show confirm page
+    GET -> confirm page
     POST -> delete then redirect to inbox with a toast
     """
     m = get_object_or_404(Message, id=message_id)
