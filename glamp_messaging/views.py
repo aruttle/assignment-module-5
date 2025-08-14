@@ -60,3 +60,24 @@ def send_message(request):
     else:
         form = MessageForm()
     return render(request, "glamp_messaging/send_message.html", {"form": form})
+
+@login_required
+def delete_message(request, message_id):
+    """
+    Allow sender or recipient to delete a message.
+    GET -> show confirm page
+    POST -> delete then redirect to inbox with a toast
+    """
+    m = get_object_or_404(Message, id=message_id)
+
+    # Only sender or recipient can delete
+    if m.sender_id != request.user.id and m.recipient_id != request.user.id:
+        flash.error(request, "You don't have permission to delete this message.")
+        return redirect("glamp_messaging:inbox")
+
+    if request.method == "POST":
+        m.delete()
+        flash.success(request, "Message deleted.")
+        return redirect("glamp_messaging:inbox")
+
+    return render(request, "glamp_messaging/confirm_delete.html", {"message_obj": m})

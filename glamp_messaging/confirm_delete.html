@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Confirm delete{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h3>Delete this message?</h3>
+  <p><strong>Subject:</strong> {{ message_obj.subject|default:"(no subject)" }}</p>
+  <p><strong>From:</strong> {{ message_obj.sender.email|default:message_obj.sender }}</p>
+  <p><strong>To:</strong> {{ message_obj.recipient.email|default:message_obj.recipient }}</p>
+  <p><small class="text-muted">Sent at {{ message_obj.sent_at|date:"Y-m-d H:i" }}</small></p>
+
+  <form method="post" action="{% url 'glamp_messaging:delete_message' message_obj.id %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Yes, delete</button>
+    <a href="{% url 'glamp_messaging:inbox' %}" class="btn btn-secondary ms-2">Cancel</a>
+  </form>
+</div>
+{% endblock %}

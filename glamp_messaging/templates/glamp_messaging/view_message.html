@@ -24,6 +24,14 @@
       <div style="white-space: pre-wrap;">
         {{ message_obj.body|default:"(no content)" }}
       </div>
+
+      <hr>
+      <form method="post" action="{% url 'glamp_messaging:delete_message' message_obj.id %}"
+            onsubmit="return confirm('Delete this message? This cannot be undone.');">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-danger">Delete</button>
+        <a href="{% url 'glamp_messaging:inbox' %}" class="btn btn-secondary ms-2">Cancel</a>
+      </form>
     </div>
   </div>
 </div>
