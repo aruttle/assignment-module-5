@@ -46,20 +46,28 @@ def view_message(request, message_id):
 
 @login_required
 def send_message(request):
-    """
-    Send a message; show a success toast then redirect to inbox.
-    """
-    if request.method == "POST":
-        form = MessageForm(request.POST)
+    if request.method == 'POST':
+        form = MessageForm(request.POST, user=request.user)
         if form.is_valid():
             msg = form.save(commit=False)
+
+            
+            if not (request.user.is_staff or request.user.is_superuser):
+                if not (msg.recipient.is_staff or msg.recipient.is_superuser):
+                    flash.error(request, "You can only message the admin team.")
+                    return redirect('glamp_messaging:send_message')
+
             msg.sender = request.user
             msg.save()
-            flash.success(request, "Message sent!")
-            return redirect("glamp_messaging:inbox")
+            flash.success(request, "Message sent.")
+            return redirect('glamp_messaging:inbox')
     else:
-        form = MessageForm()
-    return render(request, "glamp_messaging/send_message.html", {"form": form})
+        form = MessageForm(user=request.user)
+
+        if not (request.user.is_staff or request.user.is_superuser) and form.fields['recipient'].queryset.count() == 0:
+            flash.error(request, "There are no admin accounts available to receive messages.")
+
+    return render(request, 'glamp_messaging/send_message.html', {'form': form})
 
 @login_required
 def delete_message(request, message_id):
