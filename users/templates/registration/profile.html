@@ -14,6 +14,20 @@
         <dt class="col-sm-3">Email</dt>
         <dd class="col-sm-9">{{ request.user.email|default:"—" }}</dd>
 
+        <dt class="col-sm-3">Phone</dt>
+        <dd class="col-sm-9">{{ request.user.phone|default:"—" }}</dd>
+
+        <dt class="col-sm-3">Address</dt>
+        <dd class="col-sm-9">
+          {% if request.user.address_line1 or request.user.address_line2 or request.user.city or request.user.county or request.user.postcode or request.user.country %}
+            {{ request.user.address_line1 }}{% if request.user.address_line1 and request.user.address_line2 %}, {% endif %}{{ request.user.address_line2 }}<br>
+            {{ request.user.city }}{% if request.user.city and request.user.county %}, {% endif %}{{ request.user.county }}{% if request.user.postcode %} {{ request.user.postcode }}{% endif %}<br>
+            {{ request.user.country }}
+          {% else %}
+            —
+          {% endif %}
+        </dd>
+
         <dt class="col-sm-3">Joined</dt>
         <dd class="col-sm-9">{{ request.user.date_joined|date:"Y-m-d H:i" }}</dd>
 
