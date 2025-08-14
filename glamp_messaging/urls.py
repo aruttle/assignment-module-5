@@ -6,6 +6,6 @@ app_name = "glamp_messaging"
 urlpatterns = [
     path("", views.inbox, name="inbox"),
     path("message/<int:message_id>/", views.view_message, name="view_message"),
-    path("message/<int:message_id>/delete/", views.delete_message, name="delete_message"),
     path("send/", views.send_message, name="send_message"),
+    path("delete/<int:message_id>/", views.delete_message, name="delete_message"),
 ]
