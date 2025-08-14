@@ -15,15 +15,14 @@
     </div>
     <div class="card-body">
       <p class="mb-1"><strong>From:</strong>
-        {{ message_obj.sender.get_full_name|default:message_obj.sender.username|default:message_obj.sender.email }}
+        {{ message_obj.sender.email|default:message_obj.sender }}
       </p>
       <p class="mb-3"><strong>To:</strong>
-        {{ message_obj.recipient.get_full_name|default:message_obj.recipient.username|default:message_obj.recipient.email }}
+        {{ message_obj.recipient.email|default:message_obj.recipient }}
       </p>
       <hr>
       <div style="white-space: pre-wrap;">
-        {# Support either "body" or "content" fields #}
-        {{ message_obj.body|default:message_obj.content }}
+        {{ message_obj.body|default:"(no content)" }}
       </div>
     </div>
   </div>

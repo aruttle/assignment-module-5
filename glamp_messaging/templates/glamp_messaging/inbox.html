@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block title %}Inbox | Glamping Portal{% endblock %}
 
@@ -6,21 +6,28 @@
 <div class="container mt-4">
   <h2>Your Inbox</h2>
 
-  <ul class="list-group">
-    {% for m in inbox_messages %}
-      <li class="list-group-item d-flex justify-content-between align-items-center">
-        <div>
-          <strong>From:</strong>
-          {{ m.sender.get_full_name|default:m.sender.username|default:m.sender.email }}<br>
-          <strong>Subject:</strong> {{ m.subject }}<br>
-          <small class="text-muted">Sent at {{ m.sent_at|date:"Y-m-d H:i" }}</small>
-        </div>
-        <a href="{% url 'glamp_messaging:view_message' m.id %}" class="btn btn-sm btn-outline-primary">View</a>
-      </li>
-    {% empty %}
-      <li class="list-group-item">You have no messages yet.</li>
-    {% endfor %}
-  </ul>
+  {% if inbox_messages %}
+    <ul class="list-group">
+      {% for m in inbox_messages %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <strong>From:</strong>
+            {{ m.sender.email|default:"(no email)" }}<br>
+            <strong>Subject:</strong>
+            {{ m.subject|default:"(no subject)" }}<br>
+            <small class="text-muted">
+              Sent at {{ m.sent_at|date:"Y-m-d H:i" }}
+            </small>
+          </div>
+          <a href="{% url 'glamp_messaging:view_message' m.id %}" class="btn btn-sm btn-outline-primary">
+            View
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="alert alert-info mt-3 mb-0">You have no messages yet.</div>
+  {% endif %}
 
   <a href="{% url 'glamp_messaging:send_message' %}" class="btn btn-success mt-4">Send New Message</a>
 </div>
