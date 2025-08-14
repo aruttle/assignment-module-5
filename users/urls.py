@@ -7,13 +7,14 @@ from django.contrib.auth.views import (
     PasswordResetConfirmView,
     PasswordResetCompleteView,
 )
-from .views import register, profile, switch_user, EmailLoginView
+from .views import register, profile, switch_user, EmailLoginView, edit_profile
 
 app_name = "users"
 
 urlpatterns = [
     path("register/", register, name="register"),
     path("profile/", profile, name="profile"),
+    path("profile/edit/", edit_profile, name="edit_profile"),
 
     # Login (email-based form; redirects if already authenticated)
     path(
@@ -32,7 +33,7 @@ urlpatterns = [
     # Quick “switch account” helper: logs out, then take to login
     path("switch/", switch_user, name="switch_user"),
 
-    # --- Password reset flow (built-in views) ---
+    # --- Password reset flow ---
     path(
         "password-reset/",
         PasswordResetView.as_view(
@@ -63,6 +64,5 @@ urlpatterns = [
         PasswordResetCompleteView.as_view(
             template_name="registration/password_reset_complete.html"
         ),
-        name="password_reset_complete",
-    ),
+        name="password_reset_complete"),
 ]
