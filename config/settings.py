@@ -116,7 +116,6 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # WhiteNoise: simpler non-manifest storage avoids racey 404s
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
-
 WHITENOISE_USE_FINDERS = True
 
 if DEBUG:
@@ -150,3 +149,28 @@ CSRF_TRUSTED_ORIGINS = config(
     default='https://assignment-module-5.onrender.com,http://localhost:8000,http://127.0.0.1:8000'
 ).split(',')
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# --- Email (safe defaults for password reset) ---
+if DEBUG:
+    # Dev: print emails to console so reset links are visible and nothing can fail
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    DEFAULT_FROM_EMAIL = 'no-reply@example.com'
+else:
+    # Prod: allow configuring real email via environment variables.
+    # If not configured, fall back to console to avoid runtime errors.
+    EMAIL_BACKEND = config(
+        'EMAIL_BACKEND',
+        default='django.core.mail.backends.console.EmailBackend'
+    )
+    DEFAULT_FROM_EMAIL = config(
+        'DEFAULT_FROM_EMAIL',
+        default='no-reply@assignment-module-5.onrender.com'
+    )
+    # Only read SMTP settings if the chosen backend is SMTP
+    if EMAIL_BACKEND.endswith('smtp.EmailBackend'):
+        EMAIL_HOST = config('EMAIL_HOST', default='')
+        EMAIL_PORT = config('EMAIL_PORT', cast=int, default=587)
+        EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+        EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+        EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool, default=True)
+        EMAIL_USE_SSL = config('EMAIL_USE_SSL', cast=bool, default=False)
