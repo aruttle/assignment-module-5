@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
+
+
+<url>
+  <loc>https://assignment-module-5.onrender.com/</loc>
+  <lastmod>2025-08-15T22:46:20+00:00</lastmod>
+  <priority>1.00</priority>
+</url>
+<url>
+  <loc>https://assignment-module-5.onrender.com/bookings/accommodations/</loc>
+  <lastmod>2025-08-15T22:46:20+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://assignment-module-5.onrender.com/gallery/</loc>
+  <lastmod>2025-08-15T22:46:20+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://assignment-module-5.onrender.com/users/login/?next=/bookings/</loc>
+  <lastmod>2025-08-15T22:46:20+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://assignment-module-5.onrender.com/users/login/?next=/messages/</loc>
+  <lastmod>2025-08-15T22:46:20+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://assignment-module-5.onrender.com/users/login/</loc>
+  <lastmod>2025-08-15T22:46:20+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://assignment-module-5.onrender.com/users/register/</loc>
+  <lastmod>2025-08-15T22:46:20+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://assignment-module-5.onrender.com/bookings/accommodation/3/</loc>
+  <lastmod>2025-08-15T22:46:20+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://assignment-module-5.onrender.com/bookings/accommodation/4/</loc>
+  <lastmod>2025-08-15T22:46:20+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://assignment-module-5.onrender.com/bookings/accommodation/2/</loc>
+  <lastmod>2025-08-15T22:46:20+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://assignment-module-5.onrender.com/bookings/accommodation/1/</loc>
+  <lastmod>2025-08-15T22:46:20+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://assignment-module-5.onrender.com/users/password-reset/</loc>
+  <lastmod>2025-08-15T22:46:20+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://assignment-module-5.onrender.com/users/login/?next=/bookings/request/%3Faccommodation%3D3</loc>
+  <lastmod>2025-08-15T22:46:20+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://assignment-module-5.onrender.com/users/login/?next=/bookings/request/%3Faccommodation%3D4</loc>
+  <lastmod>2025-08-15T22:46:20+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://assignment-module-5.onrender.com/users/login/?next=/bookings/request/%3Faccommodation%3D2</loc>
+  <lastmod>2025-08-15T22:46:20+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://assignment-module-5.onrender.com/users/login/?next=/bookings/request/%3Faccommodation%3D1</loc>
+  <lastmod>2025-08-15T22:46:20+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://assignment-module-5.onrender.com/admin/login/?next=/admin/</loc>
+  <lastmod>2025-08-15T22:46:20+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+
+
+</urlset>
