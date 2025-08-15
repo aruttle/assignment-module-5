@@ -31,6 +31,43 @@
   </div>
 </section>
 
+<!-- About Section -->
+<section class="py-5">
+  <div class="container">
+    <h2>About Our Glamping Site</h2>
+    <p class="mb-0">
+      Nestled near the scenic Shannon Estuary, our family-run and owned eco-friendly glamping site offers a serene escape
+      where you can enjoy stunning views, ultimate comfort, and a true connection to nature. We take pride in creating a
+      warm, welcoming atmosphere with personalized service to make your stay unforgettable.
+    </p>
+    <p class="mt-3">
+      Located just a short stroll away from charming local cafés and restaurants, you’ll have the perfect opportunity to savor
+      delicious regional cuisine and experience the friendly hospitality of the community. Whether you're looking to unwind by
+      the water or explore nearby culinary delights, our glamping site is the ideal base for a memorable getaway.
+    </p>
+  </div>
+</section>
+
+<!-- Our Location (with responsive map) -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <h2>Our Location</h2>
+    <p>
+      We're located just minutes from the water, surrounded by lush countryside and local wildlife—perfect for hiking,
+      kayaking, and relaxing under the stars.
+    </p>
+
+    <div class="ratio ratio-16x9 rounded shadow overflow-hidden">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d19973.83681744962!2d-9.312637930236725!3d52.5578090717568!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sie!4v1749299545620!5m2!1sen!2sie"
+        style="border:0;" loading="lazy" allowfullscreen
+        referrerpolicy="no-referrer-when-downgrade"
+        title="Shannon Glamping location on Google Maps"></iframe>
+    </div>
+  </div>
+</section>
+
+
 <!-- Accommodations Preview -->
 <section id="accommodations" class="py-5">
   <div class="container">
@@ -51,10 +88,7 @@
             </div>
           </div>
         </div>
-      {% empty %}
-        <div class="col-12">
-          <p class="text-center">No accommodations found.</p>
-        </div>
+      
       {% endfor %}
     </div>
     <div class="text-center mt-4">

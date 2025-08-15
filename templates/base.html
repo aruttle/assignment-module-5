@@ -39,9 +39,6 @@
           {% url 'core:home' as home_url %}
           <li class="nav-item"><a class="nav-link" href="{{ home_url|default:'#' }}">Home</a></li>
 
-          {% url 'bookings:booking_list' as booking_list_url %}
-          <li class="nav-item"><a class="nav-link" href="{{ booking_list_url|default:'#' }}">Bookings</a></li>
-
           {% url 'bookings:accommodation_list' as accommodation_list_url %}
           <li class="nav-item"><a class="nav-link" href="{{ accommodation_list_url|default:'#' }}">Accommodations</a></li>
 
@@ -50,6 +47,9 @@
             {% url 'projects:project_list' as project_list_url %}
             <li class="nav-item"><a class="nav-link" href="{{ project_list_url|default:'#' }}">Projects</a></li>
           {% endif %}
+
+          {% url 'bookings:booking_list' as booking_list_url %}
+          <li class="nav-item"><a class="nav-link" href="{{ booking_list_url|default:'#' }}">Bookings</a></li>
 
           {% url 'glamp_messaging:inbox' as inbox_url %}
           <li class="nav-item"><a class="nav-link" href="{{ inbox_url|default:'#' }}">Messages</a></li>
@@ -102,9 +102,42 @@
     {% block content %}{% endblock %}
   </main>
 
-  <footer class="bg-dark text-light py-4 mt-5" role="contentinfo">
-    <div class="container text-center">
-      <p>&copy; 2025 Glamping Portal. All rights reserved.</p>
+  <!-- Footer with contact details -->
+  <footer class="bg-dark text-light mt-5" role="contentinfo">
+    <div class="container py-5">
+      <div class="row gy-3 align-items-start">
+        <div class="col-md-6">
+          <h5 class="mb-3">Contact</h5>
+          <address class="mb-0 small">
+            <strong>Shannon Glamping</strong><br>
+            Scenic View<br>
+            Glin, County Limerick, Ireland<br>
+            <span class="d-block mt-2">
+              <abbr title="Phone">P:</abbr>
+              <a href="tel:+353611234567" class="link-light text-decoration-none">+353 61 123 4567</a>
+            </span>
+            <span class="d-block">
+              <abbr title="Email">E:</abbr>
+              <a href="mailto:info@shannonglamping.ie" class="link-light text-decoration-none">info@shannonglamping.ie</a>
+            </span>
+          </address>
+        </div>
+        <div class="col-md-6 text-md-end">
+          <h5 class="mb-3">Quick Links</h5>
+          <ul class="list-unstyled small mb-0">
+            <li><a class="link-light text-decoration-none" href="{% url 'bookings:accommodation_list' %}">Accommodations</a></li>
+            <li><a class="link-light text-decoration-none" href="{% url 'bookings:booking_list' %}">Bookings</a></li>
+            <li><a class="link-light text-decoration-none" href="{% url 'glamp_messaging:inbox' %}">Messages</a></li>
+            {% if user.is_staff or user.is_superuser %}
+              <li><a class="link-light text-decoration-none" href="{% url 'projects:project_list' %}">Projects</a></li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+
+      <hr class="border-secondary my-4">
+
+      <p class="mb-0 text-center small">&copy; 2025 Glamping Portal. All rights reserved.</p>
     </div>
   </footer>
 

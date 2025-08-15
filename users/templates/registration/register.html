@@ -1,15 +1,111 @@
 {% extends 'base.html' %}
-
 {% block title %}Register{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2>Register</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-success">Register</button>
-        <a href="{% url 'users:login' %}" class="btn btn-link">Already have an account? Login</a>
-    </form>
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow-sm">
+        <div class="card-body p-4">
+          <h1 class="h3 mb-3">Create your account</h1>
+
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger mb-3">
+              {{ form.non_field_errors }}
+            </div>
+          {% endif %}
+
+          <form method="post" novalidate>
+            {% csrf_token %}
+
+            <!-- Email -->
+            <div class="mb-3">
+              <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+              <input
+                type="email"
+                id="{{ form.email.id_for_label }}"
+                name="{{ form.email.html_name }}"
+                value="{{ form.email.value|default_if_none:'' }}"
+                class="form-control"
+                placeholder="you@example.com"
+                autocomplete="email"
+                {% if form.email.field.required %}required{% endif %}
+              >
+              {% if form.email.errors %}
+                <div class="invalid-feedback d-block">{{ form.email.errors }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Full name -->
+            <div class="mb-3">
+              <label for="{{ form.full_name.id_for_label }}" class="form-label">Full name</label>
+              <input
+                type="text"
+                id="{{ form.full_name.id_for_label }}"
+                name="{{ form.full_name.html_name }}"
+                value="{{ form.full_name.value|default_if_none:'' }}"
+                class="form-control"
+                placeholder="Your full name"
+                autocomplete="name"
+                {% if form.full_name.field.required %}required{% endif %}
+              >
+              {% if form.full_name.errors %}
+                <div class="invalid-feedback d-block">{{ form.full_name.errors }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Password -->
+            <div class="mb-3">
+              <label for="{{ form.password1.id_for_label }}" class="form-label">Password</label>
+              <input
+                type="password"
+                id="{{ form.password1.id_for_label }}"
+                name="{{ form.password1.html_name }}"
+                class="form-control"
+                placeholder="Enter a strong password"
+                autocomplete="new-password"
+                {% if form.password1.field.required %}required{% endif %}
+              >
+              {% if form.password1.help_text %}
+                <div class="form-text">{{ form.password1.help_text|safe }}</div>
+              {% endif %}
+              {% if form.password1.errors %}
+                <div class="invalid-feedback d-block">{{ form.password1.errors }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Password confirmation -->
+            <div class="mb-3">
+              <label for="{{ form.password2.id_for_label }}" class="form-label">Password confirmation</label>
+              <input
+                type="password"
+                id="{{ form.password2.id_for_label }}"
+                name="{{ form.password2.html_name }}"
+                class="form-control"
+                placeholder="Re-enter your password"
+                autocomplete="new-password"
+                {% if form.password2.field.required %}required{% endif %}
+              >
+              {% if form.password2.errors %}
+                <div class="invalid-feedback d-block">{{ form.password2.errors }}</div>
+              {% endif %}
+              <div class="form-text">Enter the same password as before, for verification.</div>
+            </div>
+
+            <div class="d-flex align-items-center gap-3 mt-4">
+              <button type="submit" class="btn btn-success">Register</button>
+              <a href="{% url 'users:login' %}" class="link-primary text-decoration-none">
+                Already have an account? <strong>Login</strong>
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <p class="text-muted small mt-3 mb-0">
+        By creating an account, you agree to our site’s acceptable use and privacy guidelines.
+      </p>
+    </div>
+  </div>
 </div>
 {% endblock %}
