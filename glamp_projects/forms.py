@@ -20,7 +20,7 @@ class ProjectForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Order people nicely; show label as full_name or email
+        # Order people show label as full_name or email
         self.fields["stakeholders"].queryset = User.objects.order_by("full_name", "email")
         self.fields["stakeholders"].label_from_instance = (
             lambda u: (u.full_name or u.email) if getattr(u, "full_name", None) else u.email

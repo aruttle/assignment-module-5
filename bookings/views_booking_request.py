@@ -18,7 +18,7 @@ def booking_request(request):
         messages.error(request, "No administrators found to receive your request. Please try again later.")
         return redirect("bookings:booking_list")
 
-    # Resolve accommodation (from GET or POST)
+    # Resolve accommodation 
     acc_id = request.GET.get("accommodation") or request.POST.get("accommodation_id")
     accommodation = None
     booked_ranges_json = "[]"
@@ -42,7 +42,7 @@ def booking_request(request):
             notes = form.cleaned_data.get("notes") or ""
             acc_id_clean = form.cleaned_data.get("accommodation_id")
 
-            # Compose subject/body (mention accommodation if present)
+            # Compose subject/body
             acc_part = f" • {accommodation.name}" if accommodation else ""
             subject = f"Booking request: {start} → {end} ({guests} guests){acc_part}"
 
@@ -78,7 +78,7 @@ def booking_request(request):
             return redirect("glamp_messaging:inbox")
         messages.error(request, "Please fix the errors below.")
     else:
-        # Pre-fill hidden accommodation_id if provided
+        # Pre-fill 
         initial = {}
         if accommodation:
             initial["accommodation_id"] = accommodation.id

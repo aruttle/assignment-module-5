@@ -152,7 +152,7 @@ def booking_edit(request, pk):
             if overlapping:
                 messages.error(request, "Selected dates are already booked. Please choose different dates.")
             else:
-                updated.user = request.user  # safety
+                updated.user = request.user  
                 updated.accommodation = acc
                 updated.save()
                 messages.success(request, "Booking updated.")

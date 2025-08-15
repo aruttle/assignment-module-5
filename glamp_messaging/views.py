@@ -102,7 +102,7 @@ def send_message(request):
         initial["subject"] = subject_param
 
     if request.method == "POST":
-        form = MessageForm(request.POST, user=request.user)  # <-- pass user
+        form = MessageForm(request.POST, user=request.user)  
         if form.is_valid():
             msg = form.save(commit=False)
             msg.sender = request.user
@@ -117,7 +117,7 @@ def send_message(request):
 
         messages.error(request, "Please fix the errors below.")
     else:
-        form = MessageForm(initial=initial, user=request.user)  # <-- pass user
+        form = MessageForm(initial=initial, user=request.user)  
 
     return render(request, "glamp_messaging/send_message.html", {"form": form})
 

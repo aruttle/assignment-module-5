@@ -2,7 +2,6 @@ from django import forms
 
 
 class BookingRequestForm(forms.Form):
-    # Optional hidden field to carry which accommodation we’re asking about
     accommodation_id = forms.IntegerField(
         required=False,
         widget=forms.HiddenInput()

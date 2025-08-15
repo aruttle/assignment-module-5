@@ -58,7 +58,7 @@ REST_FRAMEWORK = {
 # --- Middleware ---
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # serve static on Render
+    'whitenoise.middleware.WhiteNoiseMiddleware',  
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -128,7 +128,7 @@ if DEBUG:
     }
 else:
     # Production: Cloudinary for uploaded media
-    CLOUDINARY_URL = config('CLOUDINARY_URL')  # set in Render env
+    CLOUDINARY_URL = config('CLOUDINARY_URL')  
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
     STORAGES = {
         'default': {'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage'},
@@ -150,14 +150,13 @@ CSRF_TRUSTED_ORIGINS = config(
 ).split(',')
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# --- Email (safe defaults for password reset) ---
+# --- Email ---
 if DEBUG:
-    # Dev: print emails to console so reset links are visible and nothing can fail
+   
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
     DEFAULT_FROM_EMAIL = 'no-reply@example.com'
 else:
-    # Prod: allow configuring real email via environment variables.
-    # If not configured, fall back to console to avoid runtime errors.
+   
     EMAIL_BACKEND = config(
         'EMAIL_BACKEND',
         default='django.core.mail.backends.console.EmailBackend'

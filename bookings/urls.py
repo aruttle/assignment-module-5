@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views_booking_request import booking_request  # keep if you added the request flow
+from .views_booking_request import booking_request  
 
 app_name = "bookings"
 

@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const start = document.getElementById('id_start_date');
     const end = document.getElementById('id_end_date');
 
-    // Will be [] unless you later supply server-side disabled ranges
+    
     const disabledRanges = {{ booked_ranges_json|default:"[]"|safe }};
     const todayStr = "{{ today_str|default:'' }}";
 

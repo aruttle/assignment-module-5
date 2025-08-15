@@ -40,7 +40,6 @@
 
 {# IMPORTANT: base.html uses block "page_scripts" (not "scripts") #}
 {% block page_scripts %}
-  <!-- Keeping this block is safe; it won’t break anything if unused -->
   <script id="booked-ranges-data" type="application/json">
     {{ booked_ranges_json|safe }}
   </script>

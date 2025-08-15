@@ -6,7 +6,6 @@ User = get_user_model()
 
 
 class MessageForm(forms.ModelForm):
-    # Start with an empty queryset; we’ll set it in __init__
     recipient = forms.ModelChoiceField(
         queryset=User.objects.none(),
         label="Recipient",
@@ -22,7 +21,7 @@ class MessageForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop("user", None)  # we’ll pass request.user from the view
+        user = kwargs.pop("user", None)  
         super().__init__(*args, **kwargs)
 
         # Build the recipient queryset based on who is composing
@@ -32,10 +31,10 @@ class MessageForm(forms.ModelForm):
             else:
                 qs = User.objects.filter(is_active=True, is_staff=True)
         else:
-            # Fallback: show admins only so the field isn’t blank for non-staff
+            # Fallback
             qs = User.objects.filter(is_active=True, is_staff=True)
 
-        # Order nicely by name then email
+        # Order by name then email
         self.fields["recipient"].queryset = qs.order_by("full_name", "email")
 
         # Bootstrap classes
