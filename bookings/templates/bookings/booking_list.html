@@ -32,6 +32,7 @@
               <td>{{ b.check_out|date:"Y-m-d" }}</td>
               <td class="text-end">
                 <a class="btn btn-sm btn-outline-primary" href="{% url 'bookings:booking_edit' b.pk %}">Edit</a>
+                <a class="btn btn-sm btn-outline-danger" href="{% url 'bookings:booking_delete' b.pk %}">Delete</a>
               </td>
             </tr>
           {% endfor %}
@@ -45,6 +46,8 @@
   {% endif %}
 
   <div class="mt-3 d-flex flex-wrap gap-2">
+    {% if 'bookings:booking_request' in request.resolver_match.namespace %}
+    {% endif %}
     <a class="btn btn-primary" href="{% url 'bookings:booking_request' %}">Request a booking</a>
     <a class="btn btn-outline-primary" href="{% url 'bookings:booking_create' %}">Make a new booking</a>
     <a class="btn btn-outline-secondary" href="{% url 'bookings:accommodation_list' %}">Browse accommodations</a>

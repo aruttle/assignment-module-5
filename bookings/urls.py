@@ -11,5 +11,6 @@ urlpatterns = [
     path("accommodations/", views.accommodation_list, name="accommodation_list"),
     path("create/", views.booking_create, name="booking_create"),
     path("edit/<int:pk>/", views.booking_edit, name="booking_edit"),
+    path("delete/<int:pk>/", views.booking_delete, name="booking_delete"),
     path("request/", booking_request, name="booking_request"),
 ]

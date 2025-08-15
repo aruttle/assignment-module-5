@@ -15,6 +15,12 @@
         {% if is_edit %}Save changes{% else %}Create booking{% endif %}
       </button>
       <a href="{% url 'bookings:booking_list' %}" class="btn btn-secondary">Cancel</a>
+
+      {% if is_edit and booking %}
+        <a href="{% url 'bookings:booking_delete' booking.pk %}" class="btn btn-outline-danger ms-auto">
+          Delete…
+        </a>
+      {% endif %}
     </div>
   </form>
 </div>

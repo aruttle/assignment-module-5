@@ -1,34 +1,44 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from django.db.models import Q
 from .models import Message
 
 User = get_user_model()
 
+
 class MessageForm(forms.ModelForm):
+    # Start with an empty queryset; we’ll set it in __init__
+    recipient = forms.ModelChoiceField(
+        queryset=User.objects.none(),
+        label="Recipient",
+        required=True,
+    )
+
     class Meta:
         model = Message
-        fields = ['recipient', 'subject', 'body']
+        fields = ["recipient", "subject", "body"]
         widgets = {
-            'recipient': forms.Select(attrs={'class': 'form-control'}),
-            'subject': forms.TextInput(attrs={'class': 'form-control'}),
-            'body': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+            "subject": forms.TextInput(attrs={"placeholder": "Subject"}),
+            "body": forms.Textarea(attrs={"rows": 6, "placeholder": "Write your message…"}),
         }
 
-    def __init__(self, *args, user=None, **kwargs):
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop("user", None)  # we’ll pass request.user from the view
         super().__init__(*args, **kwargs)
 
-        if user is None:
-            allowed = User.objects.none()
-        elif user.is_staff or user.is_superuser:
-            # Admins can message anyone
-            allowed = User.objects.all().order_by('email')
+        # Build the recipient queryset based on who is composing
+        if user is not None:
+            if user.is_staff:
+                qs = User.objects.filter(is_active=True).exclude(pk=user.pk)
+            else:
+                qs = User.objects.filter(is_active=True, is_staff=True)
         else:
-            # Non-admins can only message admins
-            allowed = User.objects.filter(Q(is_staff=True) | Q(is_superuser=True)).distinct().order_by('email')
+            # Fallback: show admins only so the field isn’t blank for non-staff
+            qs = User.objects.filter(is_active=True, is_staff=True)
 
-        self.fields['recipient'].queryset = allowed
+        # Order nicely by name then email
+        self.fields["recipient"].queryset = qs.order_by("full_name", "email")
 
-        # Preselect if there is exactly one admin for non-admin users
-        if not (user and (user.is_staff or user.is_superuser)) and allowed.count() == 1:
-            self.fields['recipient'].initial = allowed.first().pk
+        # Bootstrap classes
+        self.fields["recipient"].widget.attrs.update({"class": "form-select"})
+        self.fields["subject"].widget.attrs.update({"class": "form-control"})
+        self.fields["body"].widget.attrs.update({"class": "form-control"})

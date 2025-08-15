@@ -47,7 +47,7 @@ def accommodation_detail(request, pk):
         'form': form,
         'booked_ranges_json': json.dumps(booked_ranges),
     }
-    print("Rendering bookings/accommodation_detail.html for:", accommodation.name) 
+    print("Rendering bookings/accommodation_detail.html for:", accommodation.name)
     return render(request, 'bookings/accommodation_detail.html', context)
 
 def booking_success(request):
@@ -57,7 +57,6 @@ def booking_success(request):
 def booking_list(request):
     """
     Show only the current user's bookings, newest first.
-    If none, the template shows the empty state with CTAs.
     """
     user_bookings = (
         Booking.objects.filter(user=request.user)
@@ -90,7 +89,7 @@ def booking_create(request):
             else:
                 messages.error(request, "Accommodation is required.")
                 return render(request, 'bookings/booking_form.html', {'form': form})
-            # Overlap validation (same as detail create)
+            # Overlap validation
             overlapping = Booking.objects.filter(
                 accommodation=booking.accommodation,
                 check_in__lt=booking.check_out,
@@ -110,7 +109,6 @@ def booking_create(request):
 def booking_edit(request, pk):
     """
     Edit an existing booking you own.
-    Maintains the same overlap validation, excluding the current booking.
     """
     booking = get_object_or_404(Booking.objects.select_related("accommodation"), pk=pk, user=request.user)
 
@@ -118,8 +116,6 @@ def booking_edit(request, pk):
         form = BookingForm(request.POST, instance=booking)
         if form.is_valid():
             updated = form.save(commit=False)
-
-            # If your form allows changing accommodation, use the new one; otherwise it stays the same.
             acc = getattr(updated, "accommodation", booking.accommodation)
 
             # Overlap validation excluding this booking
@@ -143,3 +139,18 @@ def booking_edit(request, pk):
         form = BookingForm(instance=booking)
 
     return render(request, 'bookings/booking_form.html', {'form': form, 'is_edit': True, 'booking': booking})
+
+@login_required
+def booking_delete(request, pk):
+    """
+    Delete a booking you own. GET = confirm page, POST = perform delete.
+    """
+    booking = get_object_or_404(Booking.objects.select_related("accommodation"), pk=pk, user=request.user)
+
+    if request.method == 'POST':
+        name = booking.accommodation.name if booking.accommodation else "Booking"
+        booking.delete()
+        messages.success(request, f'"{name}" booking deleted.')
+        return redirect('bookings:booking_list')
+
+    return render(request, 'bookings/confirm_delete.html', {'booking': booking})

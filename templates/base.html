@@ -42,8 +42,11 @@
           {% url 'bookings:booking_list' as booking_list_url %}
           <li class="nav-item"><a class="nav-link" href="{{ booking_list_url|default:'#' }}">Bookings</a></li>
 
-          {# Projects: staff/superusers only (no parentheses) #}
-          {% if user.is_authenticated and user.is_staff %}
+          {% url 'bookings:accommodation_list' as accommodation_list_url %}
+          <li class="nav-item"><a class="nav-link" href="{{ accommodation_list_url|default:'#' }}">Accommodations</a></li>
+
+          {# Projects: visible only to staff/superusers #}
+          {% if user.is_staff or user.is_superuser %}
             {% url 'projects:project_list' as project_list_url %}
             <li class="nav-item"><a class="nav-link" href="{{ project_list_url|default:'#' }}">Projects</a></li>
           {% endif %}
@@ -55,8 +58,11 @@
             {% url 'users:profile' as profile_url %}
             <li class="nav-item"><a class="nav-link" href="{{ profile_url|default:'#' }}">Profile</a></li>
 
-            {% url 'users:switch_user' as switch_url %}
-            <li class="nav-item"><a class="nav-link" href="{{ switch_url|default:'#' }}">Switch account</a></li>
+            {# Switch account: staff/superusers only #}
+            {% if user.is_staff or user.is_superuser %}
+              {% url 'users:switch_user' as switch_url %}
+              <li class="nav-item"><a class="nav-link" href="{{ switch_url|default:'#' }}">Switch account</a></li>
+            {% endif %}
 
             <!-- Logout styled exactly like a link; submits hidden POST form -->
             <li class="nav-item">
