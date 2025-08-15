@@ -1,15 +1,36 @@
-{% extends 'base.html' %}
-
-{% block title %}Send Message | Glamping Portal{% endblock %}
+{% extends "base.html" %}
+{% block title %}Compose Message{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2>Send a Message</h2>
-    <form method="post" class="mt-3">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-success">Send</button>
-        <a href="{% url 'glamp_messaging:inbox' %}" class="btn btn-secondary">Cancel</a>
-    </form>
+<div class="container py-4">
+  <h1 class="mb-3">Compose</h1>
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div class="mb-3">
+      <label class="form-label" for="{{ form.recipient.id_for_label }}">Recipient</label>
+      {{ form.recipient }}
+      {% if form.recipient.errors %}<div class="text-danger small mt-1">{{ form.recipient.errors }}</div>{% endif %}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label" for="{{ form.subject.id_for_label }}">Subject</label>
+      {{ form.subject }}
+      {% if form.subject.errors %}<div class="text-danger small mt-1">{{ form.subject.errors }}</div>{% endif %}
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label" for="{{ form.body.id_for_label }}">Message</label>
+      {{ form.body }}
+      {% if form.body.errors %}<div class="text-danger small mt-1">{{ form.body.errors }}</div>{% endif %}
+    </div>
+
+    <div class="d-flex gap-2">
+      <button type="submit" class="btn btn-primary">Send</button>
+      <a href="{% url 'glamp_messaging:inbox' %}" class="btn btn-secondary">Cancel</a>
+    </div>
+  </form>
 </div>
 {% endblock %}

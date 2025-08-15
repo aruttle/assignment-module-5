@@ -1,38 +1,44 @@
 {% extends "base.html" %}
-
-{% block title %}Message: {{ message_obj.subject|default:"(No subject)" }}{% endblock %}
+{% block title %}Message{% endblock %}
 
 {% block content %}
-<div class="container">
-  <p><a href="{% url 'glamp_messaging:inbox' %}" class="btn btn-link p-0">&larr; Back to inbox</a></p>
-
-  <div class="card shadow-sm">
-    <div class="card-header">
-      <strong>{{ message_obj.subject|default:"(No subject)" }}</strong>
-      <span class="text-muted float-end">
-        {{ message_obj.sent_at|date:"Y-m-d H:i" }}
-      </span>
+<div class="container py-4">
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h1 class="mb-0">{{ msg.subject|default:"(no subject)" }}</h1>
+    <div class="d-flex gap-2">
+      <a href="{% url 'glamp_messaging:reply_message' msg.pk %}" class="btn btn-outline-primary">Reply</a>
+      {% if can_archive %}
+        {% if msg.archived %}
+          <form method="post" action="{% url 'glamp_messaging:unarchive_message' msg.pk %}">
+            {% csrf_token %}
+            <button class="btn btn-outline-secondary" type="submit">Unarchive</button>
+          </form>
+        {% else %}
+          <form method="post" action="{% url 'glamp_messaging:archive_message' msg.pk %}">
+            {% csrf_token %}
+            <button class="btn btn-outline-secondary" type="submit">Archive</button>
+          </form>
+        {% endif %}
+      {% endif %}
+      <a href="{% url 'glamp_messaging:delete_message' msg.pk %}" class="btn btn-outline-danger">Delete</a>
     </div>
+  </div>
+
+  <div class="mb-2 text-muted">
+    <div><strong>From:</strong> {{ msg.sender.full_name|default:msg.sender.email }}</div>
+    <div><strong>To:</strong> {{ msg.recipient.full_name|default:msg.recipient.email }}</div>
+    <div><strong>Sent:</strong> {{ msg.sent_at|date:"Y-m-d H:i" }}</div>
+    {% if msg.archived %}<div><span class="badge bg-secondary">Archived</span></div>{% endif %}
+  </div>
+
+  <div class="card">
     <div class="card-body">
-      <p class="mb-1"><strong>From:</strong>
-        {{ message_obj.sender.email|default:message_obj.sender }}
-      </p>
-      <p class="mb-3"><strong>To:</strong>
-        {{ message_obj.recipient.email|default:message_obj.recipient }}
-      </p>
-      <hr>
-      <div style="white-space: pre-wrap;">
-        {{ message_obj.body|default:"(no content)" }}
-      </div>
-
-      <hr>
-      <form method="post" action="{% url 'glamp_messaging:delete_message' message_obj.id %}"
-            onsubmit="return confirm('Delete this message? This cannot be undone.');">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-outline-danger">Delete</button>
-        <a href="{% url 'glamp_messaging:inbox' %}" class="btn btn-secondary ms-2">Cancel</a>
-      </form>
+      <p class="mb-0" style="white-space: pre-wrap;">{{ msg.body }}</p>
     </div>
+  </div>
+
+  <div class="mt-3">
+    <a href="{% url 'glamp_messaging:inbox' %}" class="btn btn-secondary">Back to Inbox</a>
   </div>
 </div>
 {% endblock %}

@@ -1,46 +1,83 @@
 {% extends "base.html" %}
-
-{% block title %}Inbox | Glamping Portal{% endblock %}
+{% block title %}Inbox{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-  <h2>Your Inbox</h2>
+<div class="container py-4">
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h1 class="mb-0">Inbox</h1>
+    <a href="{% url 'glamp_messaging:send_message' %}" class="btn btn-primary">New Message</a>
+  </div>
 
-  {# Show a friendly error if the view passed one #}
-  {% if inbox_error %}
-    <div class="alert alert-warning">
-      We couldn’t load your inbox right now.
-      <div class="small text-muted mt-2"><code>{{ inbox_error }}</code></div>
+  <form method="get" class="row g-2 mb-3">
+    <div class="col-md-6">
+      <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Search subject or sender">
     </div>
-  {% endif %}
+    <div class="col-md-4">
+      <select name="filter" class="form-select">
+        <option value="active" {% if filter == 'active' %}selected{% endif %}>Active</option>
+        <option value="archived" {% if filter == 'archived' %}selected{% endif %}>Archived</option>
+        <option value="all" {% if filter == 'all' %}selected{% endif %}>All</option>
+      </select>
+    </div>
+    <div class="col-md-2 d-grid">
+      <button class="btn btn-outline-secondary" type="submit">Apply</button>
+    </div>
+  </form>
 
-  {% if inbox_messages %}
-    <ul class="list-group">
-      {% for m in inbox_messages %}
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          <div>
-            <strong>From:</strong>
-            {{ m.sender.email|default:"(no email)" }}<br>
-            <strong>Subject:</strong> {{ m.subject|default:"(no subject)" }}<br>
-            <small class="text-muted">Sent at {{ m.sent_at|date:"Y-m-d H:i" }}</small>
-          </div>
-          <div class="d-flex gap-2">
-            <a href="{% url 'glamp_messaging:view_message' m.id %}" class="btn btn-sm btn-outline-primary">View</a>
-            <form method="post" action="{% url 'glamp_messaging:delete_message' m.id %}"
-                  onsubmit="return confirm('Delete this message?');">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-            </form>
-          </div>
-        </li>
-      {% endfor %}
-    </ul>
+  {% if messages_qs %}
+    <div class="table-responsive">
+      <table class="table align-middle">
+        <thead>
+          <tr>
+            <th>From</th>
+            <th>Subject</th>
+            <th>Sent</th>
+            <th>Status</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for m in messages_qs %}
+            <tr class="{% if not m.read %}table-light{% endif %}">
+              <td>{{ m.sender.full_name|default:m.sender.email }}</td>
+              <td>
+                <a href="{% url 'glamp_messaging:view_message' m.pk %}">
+                  {{ m.subject|default:"(no subject)" }}
+                </a>
+              </td>
+              <td>{{ m.sent_at|date:"Y-m-d H:i" }}</td>
+              <td>
+                {% if m.archived %}
+                  <span class="badge bg-secondary">Archived</span>
+                {% else %}
+                  {% if m.read %}
+                    <span class="badge bg-success">Read</span>
+                  {% else %}
+                    <span class="badge bg-primary">New</span>
+                  {% endif %}
+                {% endif %}
+              </td>
+              <td class="text-end">
+                {% if m.archived %}
+                  <form method="post" action="{% url 'glamp_messaging:unarchive_message' m.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button class="btn btn-sm btn-outline-secondary" type="submit">Unarchive</button>
+                  </form>
+                {% else %}
+                  <form method="post" action="{% url 'glamp_messaging:archive_message' m.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button class="btn btn-sm btn-outline-secondary" type="submit">Archive</button>
+                  </form>
+                {% endif %}
+                <a href="{% url 'glamp_messaging:delete_message' m.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   {% else %}
-    {% if not inbox_error %}
-      <div class="alert alert-info mt-3 mb-0">You have no messages yet.</div>
-    {% endif %}
+    <div class="alert alert-info">No messages found.</div>
   {% endif %}
-
-  <a href="{% url 'glamp_messaging:send_message' %}" class="btn btn-success mt-4">Send New Message</a>
 </div>
 {% endblock %}
