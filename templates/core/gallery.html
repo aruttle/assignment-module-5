@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Gallery | Shannon Glamping{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <h2 class="mb-4 text-center">Glamping Gallery</h2>
+
+  <!-- Swiper -->
+  <div class="swiper mySwiper mb-5">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide">
+        <img src="{% static 'images/gallery/gallery1.jpg' %}" class="img-fluid rounded shadow w-100" alt="Girls jumping across stones under a bridge arch">
+      </div>
+      <div class="swiper-slide">
+        <img src="{% static 'images/gallery/gallery2.jpg' %}" class="img-fluid rounded shadow w-100" alt="A goat behind a flower bed">
+      </div>
+      <div class="swiper-slide">
+        <img src="{% static 'images/gallery/gallery3.jpg' %}" class="img-fluid rounded shadow w-100" alt="A goat on an old stone wall">
+      </div>
+      <div class="swiper-slide">
+        <img src="{% static 'images/gallery/gallery4.jpg' %}" class="img-fluid rounded shadow w-100" alt="Outdoor dining setup">
+      </div>
+      <div class="swiper-slide">
+        <img src="{% static 'images/gallery/gallery5.jpg' %}" class="img-fluid rounded shadow w-100" alt="Girls jumping across stones under a bridge arch">
+      </div>
+      <div class="swiper-slide">
+        <img src="{% static 'images/gallery/gallery6.jpg' %}" class="img-fluid rounded shadow w-100" alt="Landscape">
+      </div>
+      <div class="swiper-slide">
+        <img src="{% static 'images/gallery/gallery8.jpg' %}" class="img-fluid rounded shadow w-100" alt="Glamping pod">
+      </div>
+      <div class="swiper-slide">
+        <img src="{% static 'images/gallery/gallery7.jpg' %}" class="img-fluid rounded shadow w-100" alt="Glamping pods">
+      </div>
+      <div class="swiper-slide">
+        <img src="{% static 'images/gallery/gallery9.jpg' %}" class="img-fluid rounded shadow w-100" alt="Shanid Castle">
+      </div>
+    </div>
+
+    <!-- Swiper navigation -->
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+    <!-- Pagination -->
+    <div class="swiper-pagination"></div>
+  </div>
+
+  <!-- YouTube Video -->
+  <div class="mt-5 d-flex flex-column align-items-center">
+    <h3 class="mb-3 text-center">Discover the Shannon Estuary Way</h3>
+    <div class="ratio ratio-16x9 w-100" style="max-width: 960px;">
+      <iframe
+        src="https://www.youtube.com/embed/jPzHaW4Q32U"
+        title="Discover the Shannon Estuary Way"
+        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+        referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block page_scripts %}
+  <!-- Swiper CSS & JS from CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js" defer></script>
+
+  <!-- Your local init script -->
+  <script src="{% static 'js/gallery.js' %}" defer></script>
+{% endblock %}

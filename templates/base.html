@@ -42,6 +42,10 @@
           {% url 'bookings:accommodation_list' as accommodation_list_url %}
           <li class="nav-item"><a class="nav-link" href="{{ accommodation_list_url|default:'#' }}">Accommodations</a></li>
 
+           {% url 'core:gallery' as gallery_url %}
+          <li class="nav-item"><a class="nav-link" href="{{ gallery_url|default:'#' }}">Gallery</a></li>
+
+
           {# Projects: visible only to staff/superusers #}
           {% if user.is_staff or user.is_superuser %}
             {% url 'projects:project_list' as project_list_url %}
