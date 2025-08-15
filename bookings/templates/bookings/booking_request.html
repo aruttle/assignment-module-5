@@ -6,13 +6,20 @@
   <h1 class="mb-3">Request a Booking</h1>
 
   {% if accommodation %}
-    <div class="alert alert-info d-flex justify-content-between align-items-center">
+    <div class="alert alert-info d-flex align-items-center justify-content-between">
       <div>
         <strong>Accommodation:</strong> {{ accommodation.name }}
       </div>
-      <a class="btn btn-sm btn-outline-secondary" href="{% url 'bookings:booking_request' %}">
-        Change
-      </a>
+      <div class="d-flex gap-2">
+        <a class="btn btn-sm btn-outline-secondary"
+           href="{% url 'bookings:accommodation_detail' accommodation.id %}">
+          View details
+        </a>
+        <a class="btn btn-sm btn-primary"
+           href="{% url 'bookings:accommodation_list' %}">
+          Change accommodation
+        </a>
+      </div>
     </div>
   {% endif %}
 
@@ -20,7 +27,6 @@
     {% csrf_token %}
     {{ form.non_field_errors }}
 
-    {# carry accommodation id in POST if present #}
     {% if accommodation %}
       <input type="hidden" name="accommodation_id" value="{{ accommodation.id }}">
     {% endif %}
@@ -52,7 +58,7 @@
 
     <div class="d-flex gap-2 mt-4">
       <button type="submit" class="btn btn-primary">Send request</button>
-      <a href="{% url 'bookings:booking_list' %}" class="btn btn-secondary">Cancel</a>
+      <a href="{% url 'bookings:accommodation_list' %}" class="btn btn-secondary">Cancel</a>
     </div>
   </form>
 </div>
@@ -66,12 +72,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const start = document.getElementById('id_start_date');
     const end = document.getElementById('id_end_date');
 
-    // Booked ranges from server (if tied to an accommodation)
+    // Will be [] unless you later supply server-side disabled ranges
     const disabledRanges = {{ booked_ranges_json|default:"[]"|safe }};
     const todayStr = "{{ today_str|default:'' }}";
 
     function normalizeRanges(ranges) {
-      // flatpickr supports objects: {from: 'YYYY-MM-DD', to: 'YYYY-MM-DD'}
       return Array.isArray(ranges) ? ranges.map(r => ({from: r.from, to: r.to})) : [];
     }
 
@@ -81,9 +86,7 @@ document.addEventListener('DOMContentLoaded', function () {
         disable: normalizeRanges(disabledRanges),
         onChange: function(selectedDates) {
           if (end && selectedDates && selectedDates[0]) {
-            if (end._flatpickr) {
-              end._flatpickr.set('minDate', selectedDates[0]);
-            }
+            end._flatpickr && end._flatpickr.set('minDate', selectedDates[0]);
           }
         }
       }));

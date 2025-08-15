@@ -5,6 +5,10 @@ from .models import Accommodation, Booking
 from .forms import BookingForm
 import json
 
+# Show request messages on the bookings landing
+from glamp_messaging.models import Message
+
+
 def accommodation_detail(request, pk):
     accommodation = get_object_or_404(Accommodation, pk=pk)
 
@@ -35,11 +39,8 @@ def accommodation_detail(request, pk):
     bookings = Booking.objects.filter(accommodation=accommodation)
 
     booked_ranges = [
-        {
-            'from': booking.check_in.strftime('%Y-%m-%d'),
-            'to': booking.check_out.strftime('%Y-%m-%d')
-        }
-        for booking in bookings
+        {'from': b.check_in.strftime('%Y-%m-%d'), 'to': b.check_out.strftime('%Y-%m-%d')}
+        for b in bookings
     ]
 
     context = {
@@ -50,24 +51,46 @@ def accommodation_detail(request, pk):
     print("Rendering bookings/accommodation_detail.html for:", accommodation.name)
     return render(request, 'bookings/accommodation_detail.html', context)
 
+
 def booking_success(request):
     return render(request, 'bookings/booking_success.html')
+
 
 @login_required
 def booking_list(request):
     """
-    Show only the current user's bookings, newest first.
+    Bookings landing now shows ONLY booking *requests*.
+
+    - Everyone sees 'Your booking requests' (messages you sent).
+    - Staff also see 'Incoming booking requests' (messages sent *to you*).
     """
-    user_bookings = (
-        Booking.objects.filter(user=request.user)
-        .select_related("accommodation")
-        .order_by("-check_in")
+    outgoing_qs = (
+        Message.objects
+        .filter(sender=request.user, subject__istartswith="Booking request")
+        .select_related("recipient")
+        .order_by("-sent_at")[:100]
     )
-    return render(request, 'bookings/booking_list.html', {'bookings': user_bookings})
+
+    incoming_qs = None
+    if request.user.is_staff:
+        incoming_qs = (
+            Message.objects
+            .filter(recipient=request.user, subject__istartswith="Booking request")
+            .select_related("sender")
+            .order_by("-sent_at")[:100]
+        )
+
+    return render(
+        request,
+        'bookings/booking_list.html',
+        {'requests_qs': outgoing_qs, 'incoming_qs': incoming_qs}
+    )
+
 
 def accommodation_list(request):
     accommodations = Accommodation.objects.all()
     return render(request, 'bookings/accommodation_list.html', {'accommodations': accommodations})
+
 
 @login_required
 def booking_create(request):
@@ -105,6 +128,7 @@ def booking_create(request):
 
     return render(request, 'bookings/booking_form.html', {'form': form, 'is_edit': False})
 
+
 @login_required
 def booking_edit(request, pk):
     """
@@ -139,6 +163,7 @@ def booking_edit(request, pk):
         form = BookingForm(instance=booking)
 
     return render(request, 'bookings/booking_form.html', {'form': form, 'is_edit': True, 'booking': booking})
+
 
 @login_required
 def booking_delete(request, pk):
