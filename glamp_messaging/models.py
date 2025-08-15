@@ -19,5 +19,7 @@ class Message(models.Model):
     sent_at = models.DateTimeField(auto_now_add=True)
     read = models.BooleanField(default=False)
 
+    archived = models.BooleanField(default=False)
+
     def __str__(self):
         return f"From {self.sender.email} to {self.recipient.email}: {self.subject}"
