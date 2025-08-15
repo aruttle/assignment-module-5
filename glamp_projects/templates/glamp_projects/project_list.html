@@ -2,8 +2,88 @@
 {% block title %}Projects{% endblock %}
 
 {% block content %}
-    <div class="container mt-4">
-        <h1>Projects</h1>
-        <p>This is the projects page. You can build this out further later.</p>
+<div class="container py-4">
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h1 class="mb-0">Projects</h1>
+    <a href="{% url 'projects:project_create' %}" class="btn btn-primary">New Project</a>
+  </div>
+
+  <form method="get" class="row g-2 mb-3">
+    <div class="col-md-6">
+      <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Search name/description">
     </div>
+    <div class="col-md-4">
+      <select name="status" class="form-select">
+        <option value="">All statuses</option>
+        {% for val,label in status_choices %}
+          <option value="{{ val }}" {% if status == val %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2 d-grid">
+      <button class="btn btn-outline-secondary" type="submit">Filter</button>
+    </div>
+  </form>
+
+  {% if projects %}
+    <div class="table-responsive">
+      <table class="table align-middle">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Dates</th>
+            <th>Status</th>
+            <th>Stakeholders</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for project in projects %}
+            <tr>
+              <td><a href="{% url 'projects:project_detail' pk=project.pk %}">{{ project.name }}</a></td>
+              <td>
+                {% if project.start_date %}{{ project.start_date }}{% else %}—{% endif %}
+                →
+                {% if project.end_date %}{{ project.end_date }}{% else %}—{% endif %}
+              </td>
+              <td>
+                {% if project.status == 'PLANNED' %}
+                  <span class="badge bg-secondary">Planned</span>
+                {% elif project.status == 'IN_PROGRESS' %}
+                  <span class="badge bg-primary">In Progress</span>
+                {% elif project.status == 'ON_HOLD' %}
+                  <span class="badge bg-warning text-dark">On Hold</span>
+                {% elif project.status == 'COMPLETED' %}
+                  <span class="badge bg-success">Completed</span>
+                {% elif project.status == 'CANCELLED' %}
+                  <span class="badge bg-dark">Cancelled</span>
+                {% endif %}
+              </td>
+              <td>
+                {% with people=project.stakeholders.all %}
+                  {% if people %}
+                    {% for p in people|slice:":2" %}
+                      <span class="me-1">{{ p.full_name|default:p.email }}</span>
+                    {% endfor %}
+                    {% if people|length > 2 %}
+                      <span class="text-muted">+{{ people|length|add:"-2" }}</span>
+                    {% endif %}
+                  {% else %}—
+                  {% endif %}
+                {% endwith %}
+              </td>
+              <td class="text-end">
+                <a class="btn btn-sm btn-outline-secondary" href="{% url 'projects:project_detail' pk=project.pk %}">View</a>
+                <a class="btn btn-sm btn-outline-primary" href="{% url 'projects:project_edit' pk=project.pk %}">Edit</a>
+                <a class="btn btn-sm btn-outline-danger" href="{% url 'projects:project_delete' pk=project.pk %}">Delete</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="alert alert-info">No projects found. Try adjusting your filters or create a new project.</div>
+  {% endif %}
+</div>
 {% endblock %}
