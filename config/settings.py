@@ -34,7 +34,7 @@ INSTALLED_APPS = [
     'core',
     'users',
     'bookings',
-    'projects',
+    # 'projects',  # removed (no module on Render)
     'glamp_projects',
     'glamp_messaging',
 
