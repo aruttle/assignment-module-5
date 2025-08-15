@@ -42,8 +42,11 @@
           {% url 'bookings:booking_list' as booking_list_url %}
           <li class="nav-item"><a class="nav-link" href="{{ booking_list_url|default:'#' }}">Bookings</a></li>
 
-          {% url 'projects:project_list' as project_list_url %}
-          <li class="nav-item"><a class="nav-link" href="{{ project_list_url|default:'#' }}">Projects</a></li>
+          {# Projects: staff/superusers only (no parentheses) #}
+          {% if user.is_authenticated and user.is_staff %}
+            {% url 'projects:project_list' as project_list_url %}
+            <li class="nav-item"><a class="nav-link" href="{{ project_list_url|default:'#' }}">Projects</a></li>
+          {% endif %}
 
           {% url 'glamp_messaging:inbox' as inbox_url %}
           <li class="nav-item"><a class="nav-link" href="{{ inbox_url|default:'#' }}">Messages</a></li>
@@ -80,15 +83,15 @@
 
   <main id="main-content" class="container mt-4" role="main">
     {% if messages %}
-  {% with django_messages=messages %}
-    {% for message in django_messages %}
-      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-    {% endfor %}
-  {% endwith %}
-{% endif %}
+      {% with django_messages=messages %}
+        {% for message in django_messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endwith %}
+    {% endif %}
 
     {% block content %}{% endblock %}
   </main>
