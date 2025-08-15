@@ -16,7 +16,32 @@ def _require_auth(request):
 
 @login_required
 def inbox(request):
-    filter_val = (request.GET.get("filter") or "active").lower()
+    """
+    Recipient mailbox with archived filter + simple search.
+
+    Supports:
+      - ?filter=active|archived|all  (preferred)
+      - ?status=archived             (legacy)
+      - ?archived=1/true/yes/y       (legacy boolean)
+      - ?q=...                       (subject or sender name/email)
+    """
+    # Primary param
+    primary = (request.GET.get("filter") or "").strip().lower()
+
+    # Back-compat params
+    status = (request.GET.get("status") or "").strip().lower()
+    archived_flag = (request.GET.get("archived") or "").strip().lower()
+
+    # Decide final filter value
+    if primary in {"active", "archived", "all"}:
+        filter_val = primary
+    elif status == "archived":
+        filter_val = "archived"
+    elif archived_flag in {"1", "true", "yes", "y", "archived"}:
+        filter_val = "archived"
+    else:
+        filter_val = "active"
+
     q = (request.GET.get("q") or "").strip()
 
     qs = (
@@ -28,8 +53,9 @@ def inbox(request):
     if filter_val == "archived":
         qs = qs.filter(archived=True)
     elif filter_val == "all":
-        pass
+        pass  # no archive filter
     else:
+        # default to active
         filter_val = "active"
         qs = qs.filter(archived=False)
 

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Server error (500){% endblock %}
+
+{% block content %}
+<div class="container py-5 text-center">
+  <h1 class="display-5 fw-bold">Something went wrong</h1>
+  <p class="lead">We’re sorry—an unexpected error occurred.</p>
+
+  <div class="d-flex justify-content-center gap-2 mt-3">
+    <a href="{% url 'core:home' %}" class="btn btn-success">Return home</a>
+    <a href="mailto:info@shannonglamping.ie" class="btn btn-outline-secondary">Contact support</a>
+  </div>
+
+  <p class="text-muted small mt-3">Error code: 500</p>
+</div>
+{% endblock %}
