@@ -53,8 +53,18 @@ def accommodation_detail(request, pk):
 def booking_success(request):
     return render(request, 'bookings/booking_success.html')
 
+@login_required
 def booking_list(request):
-    return render(request, 'bookings/booking_list.html')
+    """
+    Show only the current user's bookings, newest first.
+    If none, the template shows the empty state with CTAs.
+    """
+    user_bookings = (
+        Booking.objects.filter(user=request.user)
+        .select_related("accommodation")
+        .order_by("-check_in")
+    )
+    return render(request, 'bookings/booking_list.html', {'bookings': user_bookings})
 
 def accommodation_list(request):
     accommodations = Accommodation.objects.all()
@@ -80,9 +90,56 @@ def booking_create(request):
             else:
                 messages.error(request, "Accommodation is required.")
                 return render(request, 'bookings/booking_form.html', {'form': form})
+            # Overlap validation (same as detail create)
+            overlapping = Booking.objects.filter(
+                accommodation=booking.accommodation,
+                check_in__lt=booking.check_out,
+                check_out__gt=booking.check_in
+            ).exists()
+            if overlapping:
+                messages.error(request, "Selected dates are already booked. Please choose different dates.")
+                return render(request, 'bookings/booking_form.html', {'form': form})
             booking.save()
             return redirect('bookings:booking_success')
     else:
         form = BookingForm(initial={'accommodation': accommodation})
 
-    return render(request, 'bookings/booking_form.html', {'form': form})
+    return render(request, 'bookings/booking_form.html', {'form': form, 'is_edit': False})
+
+@login_required
+def booking_edit(request, pk):
+    """
+    Edit an existing booking you own.
+    Maintains the same overlap validation, excluding the current booking.
+    """
+    booking = get_object_or_404(Booking.objects.select_related("accommodation"), pk=pk, user=request.user)
+
+    if request.method == 'POST':
+        form = BookingForm(request.POST, instance=booking)
+        if form.is_valid():
+            updated = form.save(commit=False)
+
+            # If your form allows changing accommodation, use the new one; otherwise it stays the same.
+            acc = getattr(updated, "accommodation", booking.accommodation)
+
+            # Overlap validation excluding this booking
+            overlapping = Booking.objects.filter(
+                accommodation=acc,
+                check_in__lt=updated.check_out,
+                check_out__gt=updated.check_in
+            ).exclude(pk=booking.pk).exists()
+
+            if overlapping:
+                messages.error(request, "Selected dates are already booked. Please choose different dates.")
+            else:
+                updated.user = request.user  # safety
+                updated.accommodation = acc
+                updated.save()
+                messages.success(request, "Booking updated.")
+                return redirect('bookings:booking_list')
+        else:
+            messages.error(request, "Please fix the errors below.")
+    else:
+        form = BookingForm(instance=booking)
+
+    return render(request, 'bookings/booking_form.html', {'form': form, 'is_edit': True, 'booking': booking})

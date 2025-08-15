@@ -26,18 +26,21 @@
       loading="lazy">
   {% endif %}
 
-  <form method="post" novalidate>
-    {% csrf_token %}
-    {{ form.non_field_errors }}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-success">Book Now</button>
-  </form>
+  <div class="d-flex gap-2">
+    <a class="btn btn-success"
+       href="{% url 'bookings:booking_request' %}?accommodation={{ accommodation.id }}">
+      Book Now
+    </a>
+    <a class="btn btn-outline-secondary" href="{% url 'bookings:accommodation_list' %}">
+      Back to Accommodations
+    </a>
+  </div>
 </div>
 {% endblock %}
 
 {# IMPORTANT: base.html uses block "page_scripts" (not "scripts") #}
 {% block page_scripts %}
-  <!-- Provide the data; base.html already includes flatpickr-init.js after this block -->
+  <!-- Keeping this block is safe; it won’t break anything if unused -->
   <script id="booked-ranges-data" type="application/json">
     {{ booked_ranges_json|safe }}
   </script>

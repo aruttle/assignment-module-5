@@ -1,15 +1,21 @@
-
 {% extends "base.html" %}
-{% block title %}New Booking{% endblock %}
+{% block title %}{% if is_edit %}Edit Booking{% else %}New Booking{% endif %}{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-  <h2>Make a New Booking</h2>
-  <form method="post">
+<div class="container py-4">
+  <h1 class="mb-3">{% if is_edit %}Edit Booking{% else %}New Booking{% endif %}</h1>
+
+  <form method="post" novalidate>
     {% csrf_token %}
+    {{ form.non_field_errors }}
     {{ form.as_p }}
-    <button type="submit" class="btn btn-success">Book Now</button>
-    <a href="{% url 'bookings:booking_list' %}" class="btn btn-secondary">Cancel</a>
+
+    <div class="d-flex gap-2 mt-2">
+      <button type="submit" class="btn btn-primary">
+        {% if is_edit %}Save changes{% else %}Create booking{% endif %}
+      </button>
+      <a href="{% url 'bookings:booking_list' %}" class="btn btn-secondary">Cancel</a>
+    </div>
   </form>
 </div>
 {% endblock %}
